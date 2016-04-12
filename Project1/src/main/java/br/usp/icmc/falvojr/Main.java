@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -69,14 +70,16 @@ public class Main {
     }
 
     private static void solveSuDokus(final List<Integer[][]> sudokus) {
-	final long startTime = System.currentTimeMillis();
+	final long startTime = System.nanoTime();
 
 	final SuDokuBacktracking sudokuBacktracking = new SuDokuBacktracking(sudokus.stream());
 	sudokuBacktracking.solve();
 
-	final long endTime = System.currentTimeMillis();
+	final long endTime = System.nanoTime();
 
-	System.err.printf("\n%.2f seconds\n\n", (endTime - startTime) / 1000D);
+	final long elapsedTime = TimeUnit.SECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
+
+	System.err.printf("\n%d seconds\n\n", elapsedTime);
     }
 
 }

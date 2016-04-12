@@ -39,12 +39,14 @@ public class Main {
 	    final List<Integer[][]> sudokus = new ArrayList<>();
 	    final Pattern pattern = Pattern.compile(" ");
 
+	    // Prepares file data, ignoring the number of test cases and the empty lines. Moreover, parse String values to Integer.
 	    final Iterator<Integer[]> preparedLines = Files.lines(inputPath).parallel().filter(row -> {
 		return !(row == null || "".equals(row.trim())) && pattern.split(row).length == DIMENSION;
 	    }).map(row -> {
 		return pattern.splitAsStream(row).map(Integer::parseInt).toArray(Integer[]::new);
 	    }).iterator();
 
+	    // Through of the preparedLines variable, creates the SuDoku matrices.
 	    Integer[][] sudoku = new Integer[DIMENSION][DIMENSION];
 	    Integer sudokuIndex = 0;
 	    while (preparedLines.hasNext()) {
@@ -57,7 +59,8 @@ public class Main {
 		}
 	    }
 
-	    Main.solveSudokus(sudokus);
+	    // Call method for solve the SuDokus
+	    Main.solveSuDokus(sudokus);
 
 	} catch (final IOException e) {
 	    e.printStackTrace();
@@ -65,91 +68,15 @@ public class Main {
 
     }
 
-    private static void solveSudokus(final List<Integer[][]> sudokus) {
+    private static void solveSuDokus(final List<Integer[][]> sudokus) {
 	final long startTime = System.currentTimeMillis();
-	sudokus.parallelStream().forEach(sudoku -> {
-	    if (Main.isSolvedSudoku(0, 0, sudoku)) { // solves in place
-		Main.writeSudoku(sudoku, true);
-	    } else {
-		System.out.println("NONE");
-	    }
-	});
+
+	final SuDokuBacktracking sudokuBacktracking = new SuDokuBacktracking(sudokus.stream());
+	sudokuBacktracking.solve();
+
 	final long endTime = System.currentTimeMillis();
 
 	System.err.printf("\n%.2f seconds\n\n", (endTime - startTime) / 1000D);
-    }
-
-    private static boolean isSolvedSudoku(int i, int j, Integer[][] cells) {
-	if (i == DIMENSION) {
-	    i = 0;
-	    if (++j == DIMENSION) {
-		return true;
-	    }
-	}
-	if (cells[i][j] != 0) { // skip filled cells
-	    return Main.isSolvedSudoku(i + 1, j, cells);
-	}
-	for (int value = 1; value <= DIMENSION; ++value) {
-	    if (Main.isLegalSudoku(i, j, value, cells)) {
-		cells[i][j] = value;
-		if (Main.isSolvedSudoku(i + 1, j, cells)) {
-		    return true;
-		}
-	    }
-	}
-	cells[i][j] = 0; // reset on backtrack
-	return false;
-    }
-
-    private static boolean isLegalSudoku(int i, int j, int value, Integer[][] cells) {
-	for (int k = 0; k < DIMENSION; ++k) { // row
-	    if (value == cells[k][j]) {
-		return false;
-	    }
-	}
-	for (int k = 0; k < DIMENSION; ++k) { // column
-	    if (value == cells[i][k]) {
-		return false;
-	    }
-	}
-	final int boxRowOffset = (i / 3) * 3;
-	final int boxColOffset = (j / 3) * 3;
-	for (int k = 0; k < 3; ++k) { // box
-	    for (int m = 0; m < 3; ++m) {
-		if (value == cells[boxRowOffset + k][boxColOffset + m]) {
-		    return false;
-		}
-	    }
-	}
-
-	return true; // no violations, so it's legal
-    }
-
-    private static synchronized void writeSudoku(Integer[][] sudoku, boolean isFormatted) {
-	if (isFormatted) {
-	    for (int i = 0; i < DIMENSION; ++i) {
-		if (i % 3 == 0) {
-		    System.out.println(" -----------------------");
-		}
-		for (int j = 0; j < DIMENSION; ++j) {
-		    if (j % 3 == 0) {
-			System.out.print("| ");
-		    }
-		    System.out.printf("%s ", sudoku[i][j] == 0 ? " " : Integer.toString(sudoku[i][j]));
-		}
-		System.out.println("|");
-	    }
-	    System.out.println(" -----------------------");
-	} else {
-	    for (int i = 0; i < DIMENSION; ++i) {
-		for (int j = 0; j < DIMENSION; ++j) {
-		    System.out.printf("%d ", sudoku[i][j]);
-		}
-		System.out.println();
-	    }
-	    System.out.println();
-	}
-
     }
 
 }

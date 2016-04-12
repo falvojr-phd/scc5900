@@ -18,13 +18,13 @@ Trabalhos práticos de programação e provas envolvendo a resolução de proble
 
 ##Bibliografia Basica:
 
-1. CORMEN, T.H.; LEISESON, C.E.; RIVEST, R.L.; STEIN, C. Algoritmos – Teoria e Prática. Tradução da 2a. edição americana. Elsevier, 2002.
-2. ZIVIANI, N - Projeto de Algoritmos com Implementação em Pascal e C. Ed. Thomson, 2a Ed.2004.
+1. CORMEN, T.H.; LEISESON, C.E.; RIVEST, R.L.; STEIN, C. Algoritmos – Teoria e Prática. Elsevier, 2a Ed. 2002.
+2. ZIVIANI, N. Projeto de Algoritmos com Implementação em Pascal e C. Ed. Thomson, 2a Ed. 2004.
 
 ##Bibliografia Complementar:
 
-1. LEVITIN, A.V. - Introduction to the Design and Analysis of Algorithms (2nd. Edition). Addison Wesley, 2003. 
-2. SEDGEWICK, R. - Algorithms in C – part 5 Graph Algorithms. 3rd Edition. Addison-Wesley, 2002. 
-3. SKIENA, S.S. - The Algorithm Design Manual. Springer, 1998. 
-4. SKIENA, S.S.; REVILLA, M.A. - Programming Challenges – The Programming Contest Training Manual. Springer, 2003. 
+1. LEVITIN, A.V. Introduction to the Design and Analysis of Algorithms (2nd. Edition). Addison Wesley, 2003. 
+2. SEDGEWICK, R. Algorithms in C – part 5 Graph Algorithms. 3rd Edition. Addison-Wesley, 2002. 
+3. SKIENA, S.S. The Algorithm Design Manual. Springer, 1998. 
+4. SKIENA, S.S.; REVILLA, M.A. Programming Challenges – The Programming Contest Training Manual. Springer, 2003. 
 5. KLEINBERG, J; TARDOS, E. Algorithm Design. Addison-Wesley. 2006.

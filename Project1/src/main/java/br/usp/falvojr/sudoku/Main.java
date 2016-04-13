@@ -1,4 +1,4 @@
-package br.usp.icmc.falvojr;
+package br.usp.falvojr.sudoku;
 
 import java.io.IOException;
 import java.net.URL;
@@ -11,14 +11,15 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import br.usp.falvojr.sudoku.algorithm.Backtracking;
+import br.usp.falvojr.sudoku.util.SuDokus;
+
 /**
  * Main class.
  *
  * @author Venilton FalvoJr (falvojr)
  */
 public class Main {
-
-    private static final Integer DIMENSION = 9;
 
     private static final String TXT_EXTENSION = ".TXT";
     private static final String BIN_FOLDER = "";
@@ -42,21 +43,21 @@ public class Main {
 
 	    // Prepares file data, ignoring the number of test cases and the empty lines. Moreover, parse String values to Integer.
 	    final Iterator<Integer[]> preparedLines = Files.lines(inputPath).parallel().filter(row -> {
-		return !(row == null || "".equals(row.trim())) && pattern.split(row).length == DIMENSION;
+		return !(row == null || "".equals(row.trim())) && pattern.split(row).length == SuDokus.BOARD_SIZE;
 	    }).map(row -> {
 		return pattern.splitAsStream(row).map(Integer::parseInt).toArray(Integer[]::new);
 	    }).iterator();
 
 	    // Through of the preparedLines variable, creates the SuDoku matrices.
-	    Integer[][] sudoku = new Integer[DIMENSION][DIMENSION];
+	    Integer[][] sudoku = new Integer[SuDokus.BOARD_SIZE][SuDokus.BOARD_SIZE];
 	    Integer sudokuIndex = 0;
 	    while (preparedLines.hasNext()) {
 		final Integer[] row = preparedLines.next();
 		sudoku[sudokuIndex] = row;
-		if (++sudokuIndex == DIMENSION) {
+		if (++sudokuIndex == SuDokus.BOARD_SIZE) {
 		    sudokus.add(sudoku);
 		    sudokuIndex = 0;
-		    sudoku = new Integer[DIMENSION][DIMENSION];
+		    sudoku = new Integer[SuDokus.BOARD_SIZE][SuDokus.BOARD_SIZE];
 		}
 	    }
 
@@ -72,7 +73,7 @@ public class Main {
     private static void solveSuDokus(final List<Integer[][]> sudokus) {
 	final long startTime = System.nanoTime();
 
-	final SuDokuBacktracking sudokuBacktracking = new SuDokuBacktracking(sudokus.parallelStream());
+	final Backtracking sudokuBacktracking = new Backtracking(sudokus.stream());
 	sudokuBacktracking.solve();
 
 	final long endTime = System.nanoTime();

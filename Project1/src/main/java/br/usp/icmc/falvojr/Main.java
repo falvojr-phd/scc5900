@@ -72,7 +72,7 @@ public class Main {
     private static void solveSuDokus(final List<Integer[][]> sudokus) {
 	final long startTime = System.nanoTime();
 
-	final SuDokuBacktracking sudokuBacktracking = new SuDokuBacktracking(sudokus.stream());
+	final SuDokuBacktracking sudokuBacktracking = new SuDokuBacktracking(sudokus.parallelStream());
 	sudokuBacktracking.solve();
 
 	final long endTime = System.nanoTime();

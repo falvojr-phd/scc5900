@@ -10,7 +10,7 @@ import br.usp.falvojr.sudoku.heuristic.Heuristic;
 public class MinimumRemainingValues implements Heuristic {
 
     @Override
-    public void syncPossibleValues() {
+    public void init(Integer[][] sudoku) {
 	// TODO Auto-generated method stub
 
     }

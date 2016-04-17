@@ -7,6 +7,6 @@ package br.usp.falvojr.sudoku.heuristic;
  */
 public interface Heuristic {
 
-    void syncPossibleValues();
+    void init(Integer[][] sudoku);
 
 }

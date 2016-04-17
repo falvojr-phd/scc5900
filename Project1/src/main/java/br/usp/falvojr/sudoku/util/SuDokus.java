@@ -20,32 +20,32 @@ public class SuDokus {
     /**
      * Useful method to identifies if the value is legal considering row and column.
      *
-     * @param col
      * @param row
+     * @param col
      * @param value
      * @param sudoku
      *
      * @return a flag indicating if the value is legal considering row and column.
      */
-    public static boolean isLegal(int col, int row, int value, Integer[][] sudoku) {
+    public static boolean isLegal(int row, int col, int value, Integer[][] sudoku) {
 	// verify if exists rows violations
-	for (int k = 0; k < SuDokus.BOARD_SIZE; k++) {
-	    if (value == sudoku[k][row]) {
+	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
+	    if (value == sudoku[row][i]) {
 		return false;
 	    }
-	}
+	}	
 	// verify if exists columns violations
-	for (int k = 0; k < SuDokus.BOARD_SIZE; k++) {
-	    if (value == sudoku[col][k]) {
+	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
+	    if (value == sudoku[i][col]) {
 		return false;
 	    }
-	}
+	}	
 	// verify if exists boxes violations
-	final int boxRowOffset = (col / SuDokus.BOX_SIZE) * SuDokus.BOX_SIZE;
-	final int boxColOffset = (row / SuDokus.BOX_SIZE) * SuDokus.BOX_SIZE;
-	for (int k = 0; k < SuDokus.BOX_SIZE; k++) {
-	    for (int m = 0; m < SuDokus.BOX_SIZE; m++) {
-		if (value == sudoku[boxRowOffset + k][boxColOffset + m]) {
+	final int boxRowOffset = (row / SuDokus.BOX_SIZE) * SuDokus.BOX_SIZE;
+	final int boxColOffset = (col / SuDokus.BOX_SIZE) * SuDokus.BOX_SIZE;
+	for (int i = 0; i < SuDokus.BOX_SIZE; i++) {
+	    for (int j = 0; j < SuDokus.BOX_SIZE; j++) {
+		if (value == sudoku[boxRowOffset + i][boxColOffset + j]) {
 		    return false;
 		}
 	    }
@@ -77,7 +77,7 @@ public class SuDokus {
 	} else {
 	    for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
 		for (int j = 0; j < SuDokus.BOARD_SIZE; j++) {
-		    System.out.printf("%d ", sudoku[i][j] == 0 ? " " : Integer.toString(sudoku[i][j]));
+		    System.out.printf("%s ", sudoku[i][j] == 0 ? " " : Integer.toString(sudoku[i][j]));
 		}
 		System.out.println();
 	    }
@@ -86,6 +86,18 @@ public class SuDokus {
 
     }
 
+    /**
+     * Generates a SuDoku key.
+     * 
+     * @param row
+     * @param col
+     * 
+     * @return unique key with col and row concatenation.
+     */
+    public static String generateKey(int row, int col) {
+	return new StringBuilder().append(row).append(col).toString();
+    }
+    
     /**
      * An O(nlogn) solution for difference between.
      *

@@ -2,6 +2,8 @@ package br.usp.falvojr.sudoku.algorithm;
 
 import java.util.stream.Stream;
 
+import br.usp.falvojr.sudoku.heuristic.impl.ForwardChecking;
+import br.usp.falvojr.sudoku.heuristic.impl.MinimumRemainingValues;
 import br.usp.falvojr.sudoku.util.SuDokus;
 
 /**
@@ -11,15 +13,32 @@ import br.usp.falvojr.sudoku.util.SuDokus;
  */
 public class Backtracking {
 
-    private final Stream<Integer[][]> sudokus;
+    private Stream<Integer[][]> sudokus;
+    private ForwardChecking fc;
+    private MinimumRemainingValues mrv;
 
     public Backtracking(Stream<Integer[][]> sudokus) {
 	super();
 	this.sudokus = sudokus;
     }
 
+    public Backtracking(Stream<Integer[][]> sudokus, ForwardChecking fc) {
+	this(sudokus);
+	this.fc = fc;
+    }
+
+    public Backtracking(Stream<Integer[][]> sudokus, ForwardChecking fc, MinimumRemainingValues mrv) {
+	this(sudokus, fc);
+	this.mrv = mrv;
+    }
+
     public void solve() {
 	this.sudokus.forEach(sudoku -> {
+
+	    if (this.fc != null) {
+		this.fc.init(sudoku);
+	    }
+
 	    // solves in place
 	    if (isSolved(0, 0, sudoku)) {
 		SuDokus.write(sudoku, true);
@@ -29,27 +48,39 @@ public class Backtracking {
 	});
     }
 
-    private boolean isSolved(int i, int j, Integer[][] sudoku) {
-	if (i == SuDokus.BOARD_SIZE) {
-	    i = 0;
-	    if (++j == SuDokus.BOARD_SIZE) {
+    private boolean isSolved(int row, int col, Integer[][] sudoku) {
+	if (row == SuDokus.BOARD_SIZE) {
+	    row = 0;
+	    if (++col == SuDokus.BOARD_SIZE) {
 		return true;
 	    }
 	}
+
 	// skip filled cells
-	if (sudoku[i][j] != 0) {
-	    return isSolved(i + 1, j, sudoku);
+	if (sudoku[row][col] != 0) {
+	    return isSolved(row + 1, col, sudoku);
 	}
+
+	final boolean hasFc = this.fc != null;
+	String possibilities = null;
+	if (hasFc) {
+	    this.fc.init(sudoku);
+	    possibilities = this.fc.getPossibilities().get(SuDokus.generateKey(row, col));
+	}
+
 	for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
-	    if (SuDokus.isLegal(i, j, value, sudoku)) {
-		sudoku[i][j] = value;
-		if (isSolved(i + 1, j, sudoku)) {
+	    boolean isLegal = hasFc 
+		    ? possibilities.contains(String.valueOf(value))
+		    : SuDokus.isLegal(row, col, value, sudoku);
+	    if (isLegal) {
+		sudoku[row][col] = value;
+		if (isSolved(row + 1, col, sudoku)) {
 		    return true;
 		}
 	    }
 	}
 	// reset on backtrack
-	sudoku[i][j] = 0;
+	sudoku[row][col] = 0;
 	return false;
     }
 

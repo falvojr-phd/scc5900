@@ -15,6 +15,7 @@ public class Backtracking {
 
     private Stream<Integer[][]> sudokus;
     private ForwardChecking fc;
+    @SuppressWarnings("unused")
     private MinimumRemainingValues mrv;
 
     public Backtracking(Stream<Integer[][]> sudokus) {
@@ -49,13 +50,13 @@ public class Backtracking {
     }
 
     private boolean isSolved(int row, int col, Integer[][] sudoku) {
+	// break criteria
 	if (row == SuDokus.BOARD_SIZE) {
 	    row = 0;
 	    if (++col == SuDokus.BOARD_SIZE) {
 		return true;
 	    }
 	}
-
 	// skip filled cells
 	if (sudoku[row][col] != 0) {
 	    return isSolved(row + 1, col, sudoku);
@@ -64,23 +65,28 @@ public class Backtracking {
 	final boolean hasFc = this.fc != null;
 	String possibilities = null;
 	if (hasFc) {
-	    this.fc.init(sudoku);
 	    possibilities = this.fc.getPossibilities().get(SuDokus.generateKey(row, col));
 	}
 
 	for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
-	    boolean isLegal = hasFc 
-		    ? possibilities.contains(String.valueOf(value))
+	    boolean isLegal = hasFc ? possibilities.contains(String.valueOf(value))
 		    : SuDokus.isLegal(row, col, value, sudoku);
 	    if (isLegal) {
 		sudoku[row][col] = value;
+		this.fc.sync(row, col, value, sudoku);
 		if (isSolved(row + 1, col, sudoku)) {
 		    return true;
 		}
 	    }
 	}
 	// reset on backtrack
-	sudoku[row][col] = 0;
+	int backtrackValue = new Integer(sudoku[row][col]);
+
+	if (backtrackValue != 0) {
+	    sudoku[row][col] = 0;
+	    this.fc.reset(row, col, backtrackValue, sudoku);
+	}
+
 	return false;
     }
 

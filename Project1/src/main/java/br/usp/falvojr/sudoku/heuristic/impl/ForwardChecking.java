@@ -22,14 +22,13 @@ public class ForwardChecking implements Heuristic {
     @Override
     public void init(Integer[][] sudoku) {
 	this.possibilities = new HashMap<>();
-	final int sudokuLength = sudoku.length;
-	for (int col = 0; col < sudokuLength; col++) {
-	    for (int row = 0; row < sudokuLength; row++) {
-		final String key = new StringBuilder().append(col).append(row).toString();
+	for (int row = 0; row < SuDokus.BOARD_SIZE; row++) {
+	    for (int col = 0; col < SuDokus.BOARD_SIZE; col++) {
+		final String key = new StringBuilder().append(row).append(col).toString();
 		final StringBuilder possibleValues = new StringBuilder();
-		if (sudoku[col][row] == 0) {
-		    for (int value = 1; value <= sudokuLength; value++) {
-			if (SuDokus.isLegal(col, row, value, sudoku)) {
+		if (sudoku[row][col] == 0) {
+		    for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
+			if (SuDokus.isLegal(row, col, value, sudoku)) {
 			    possibleValues.append(value);
 			}
 		    }
@@ -40,17 +39,17 @@ public class ForwardChecking implements Heuristic {
     }
     
     public void sync(int row, int col, int value, Integer[][] sudoku) {
-	// verify if exists rows violations
+	// verify if exists rows synchronizations
 	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
 	    final String key = SuDokus.generateKey(row, i);
 	    this.syncKey(key, value);
 	}
-	// verify if exists columns violations
+	// verify if exists columns synchronizations
 	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
 	    final String key = SuDokus.generateKey(i, col);
 	    this.syncKey(key, value);
 	}
-	// verify if exists boxes violations
+	// verify if exists boxes synchronizations
 	final int boxRowOffset = (row / SuDokus.BOX_SIZE) * SuDokus.BOX_SIZE;
 	final int boxColOffset = (col / SuDokus.BOX_SIZE) * SuDokus.BOX_SIZE;
 	for (int i = 0; i < SuDokus.BOX_SIZE; i++) {
@@ -70,9 +69,8 @@ public class ForwardChecking implements Heuristic {
     }
 
     public void reset(int row, int col, int value, Integer[][] sudoku) {
-	// verify if exists rows violations
+	// verify if exists rows and columns violations
 	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
-	    // verify if exists columns violations
 	    for (int j = 0; j < SuDokus.BOARD_SIZE; j++) {
 		// ignore because backtrack
 		if (i == row && j == col) {

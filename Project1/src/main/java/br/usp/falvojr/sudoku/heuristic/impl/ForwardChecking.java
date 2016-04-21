@@ -1,7 +1,6 @@
 package br.usp.falvojr.sudoku.heuristic.impl;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import br.usp.falvojr.sudoku.heuristic.Heuristic;
 import br.usp.falvojr.sudoku.util.SuDokus;
@@ -13,18 +12,27 @@ import br.usp.falvojr.sudoku.util.SuDokus;
  */
 public class ForwardChecking implements Heuristic {
 
-    private Map<String, String> possibilities;
+    private HashMap<String, String> domains;
 
-    public Map<String, String> getPossibilities() {
-	return this.possibilities;
+    public HashMap<String, String> getDomains() {
+	return this.domains;
+    }
+
+    public void setDomains(HashMap<String, String> domains) {
+        this.domains = domains;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public HashMap<String, String> getClonedDomains() {
+	return (HashMap<String, String>) this.domains.clone();
     }
 
     @Override
     public void init(Integer[][] sudoku) {
-	this.possibilities = new HashMap<>();
+	this.domains = new HashMap<>();
 	for (int row = 0; row < SuDokus.BOARD_SIZE; row++) {
 	    for (int col = 0; col < SuDokus.BOARD_SIZE; col++) {
-		final String key = new StringBuilder().append(row).append(col).toString();
+		final String key = SuDokus.generateKey(row, col);
 		final StringBuilder possibleValues = new StringBuilder();
 		if (sudoku[row][col] == 0) {
 		    for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
@@ -33,11 +41,11 @@ public class ForwardChecking implements Heuristic {
 			}
 		    }
 		}
-		this.possibilities.put(key, possibleValues.toString());
+		this.domains.put(key, possibleValues.toString());
 	    }
 	}
     }
-    
+
     public void sync(int row, int col, int value, Integer[][] sudoku) {
 	// verify if exists rows synchronizations
 	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
@@ -60,36 +68,11 @@ public class ForwardChecking implements Heuristic {
 	}
     }
 
-    private void syncKey(final String key, int value) {
-	final String oldPossibilities = this.possibilities.get(key);
+    public void syncKey(final String key, int value) {
+	final String oldPossibilities = this.domains.get(key);
 	final String syncValue = String.valueOf(value);
 	if (oldPossibilities.contains(syncValue)) {
-	    this.possibilities.put(key, oldPossibilities.replace(syncValue, ""));
-	}
-    }
-
-    public void reset(int row, int col, int value, Integer[][] sudoku) {
-	// verify if exists rows and columns violations
-	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
-	    for (int j = 0; j < SuDokus.BOARD_SIZE; j++) {
-		// ignore because backtrack
-		if (i == row && j == col) {
-		    continue;
-		}
-		// return reseted value on possible cells
-		if (SuDokus.isLegal(i, j, value, sudoku)) {
-		    final String key = SuDokus.generateKey(i, j);
-		    this.resetKey(key, value);
-		}
-	    }
-	}
-    }
-
-    private void resetKey(final String key, int value) {
-	final String oldPossibilities = this.possibilities.get(key);
-	final String resetValue = String.valueOf(value);
-	if (!oldPossibilities.contains(resetValue)) {
-	    this.possibilities.put(key, oldPossibilities.concat(resetValue));
+	    this.domains.put(key, oldPossibilities.replace(syncValue, ""));
 	}
     }
 

@@ -1,5 +1,7 @@
 package br.usp.falvojr.sudoku.algorithm;
 
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import br.usp.falvojr.sudoku.heuristic.impl.ForwardChecking;
@@ -14,6 +16,7 @@ import br.usp.falvojr.sudoku.util.SuDokus;
 public class Backtracking {
 
     private Stream<Integer[][]> sudokus;
+
     private ForwardChecking fc;
     @SuppressWarnings("unused")
     private MinimumRemainingValues mrv;
@@ -40,12 +43,19 @@ public class Backtracking {
 		this.fc.init(sudoku);
 	    }
 
+	    final long startTime = System.nanoTime();
 	    // solves in place
 	    if (isSolved(0, 0, sudoku)) {
 		SuDokus.write(sudoku, true);
 	    } else {
 		System.err.println("Solution not found!");
 	    }
+
+	    final long endTime = System.nanoTime();
+
+	    final long elapsedTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
+
+	    System.out.printf("\n%.2f seconds\n\n", elapsedTime / 1000D);
 	});
     }
 
@@ -62,31 +72,33 @@ public class Backtracking {
 	    return isSolved(row + 1, col, sudoku);
 	}
 
-	final boolean hasFc = this.fc != null;
-	String possibilities = null;
-	if (hasFc) {
-	    possibilities = this.fc.getPossibilities().get(SuDokus.generateKey(row, col));
-	}
-
-	for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
-	    boolean isLegal = hasFc ? possibilities.contains(String.valueOf(value))
-		    : SuDokus.isLegal(row, col, value, sudoku);
-	    if (isLegal) {
+	if (this.fc == null) {
+	    for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
+		if (SuDokus.isLegal(row, col, value, sudoku)) {
+		    sudoku[row][col] = value;
+		    if (isSolved(row + 1, col, sudoku)) {
+			return true;
+		    }
+		}
+	    }
+	} else {
+	    final String key = SuDokus.generateKey(row, col);
+	    while (!this.fc.getDomains().get(key).isEmpty()) {
+		final HashMap<String, String> clonedDomainSync = this.fc.getClonedDomains();
+		final int value = Integer.valueOf(this.fc.getDomains().get(key).substring(0, 1));
 		sudoku[row][col] = value;
 		this.fc.sync(row, col, value, sudoku);
 		if (isSolved(row + 1, col, sudoku)) {
 		    return true;
 		}
+		sudoku[row][col] = 0;
+		this.fc.setDomains(clonedDomainSync);
+		this.fc.syncKey(key, value);
 	    }
 	}
+
 	// reset on backtrack
-	int backtrackValue = new Integer(sudoku[row][col]);
-
-	if (backtrackValue != 0) {
-	    sudoku[row][col] = 0;
-	    this.fc.reset(row, col, backtrackValue, sudoku);
-	}
-
+	sudoku[row][col] = 0;
 	return false;
     }
 

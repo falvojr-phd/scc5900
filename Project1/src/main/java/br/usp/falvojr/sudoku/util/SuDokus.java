@@ -33,13 +33,13 @@ public class SuDokus {
 	    if (value == sudoku[row][i]) {
 		return false;
 	    }
-	}	
+	}
 	// verify if exists columns violations
 	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
 	    if (value == sudoku[i][col]) {
 		return false;
 	    }
-	}	
+	}
 	// verify if exists boxes violations
 	final int boxRowOffset = (row / SuDokus.BOX_SIZE) * SuDokus.BOX_SIZE;
 	final int boxColOffset = (col / SuDokus.BOX_SIZE) * SuDokus.BOX_SIZE;
@@ -88,16 +88,16 @@ public class SuDokus {
 
     /**
      * Generates a SuDoku key.
-     * 
+     *
      * @param row
      * @param col
-     * 
+     *
      * @return unique key with col and row concatenation.
      */
     public static String generateKey(int row, int col) {
 	return new StringBuilder().append(row).append(col).toString();
     }
-    
+
     /**
      * An O(nlogn) solution for difference between.
      *

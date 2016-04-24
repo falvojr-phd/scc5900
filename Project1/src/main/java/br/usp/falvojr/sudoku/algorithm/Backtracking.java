@@ -72,7 +72,7 @@ public class Backtracking {
 	    if (this.isSolved(0, 0, sudoku)) {
 		SuDokus.write(sudoku);
 	    } else {
-		System.err.println("Solution not found!");
+		System.err.println("Numero de atribuicoes excede limite maximo");
 	    }
 	}
 
@@ -89,40 +89,51 @@ public class Backtracking {
 	}
 	// skip filled cells
 	if (sudoku[row][col] != 0) {
-	    return this.isSolved(row + 1, col, sudoku);
+	    return this.next(row, col, sudoku);
 	}
 
-	if (this.fc == null) {
+	if (this.hasForwardCheking()) {
+	    final String key = SuDokus.generateKey(row, col);
+	    String domain;
+	    // try only FC domains possible values
+	    while (!(domain = this.fc.getDomains().get(key)).isEmpty()) {
+		this.steps++;
+		// clone domain to facilitate the synchronization of the global map
+		final HashMap<String, String> clonedDomains = this.fc.getClonedDomains();
+		// get the first value on the domain
+		final int value = Integer.valueOf(StringUtils.substring(domain, 0, 1));
+		// attribute the value, synchronize FC domains and try solve next cell
+		sudoku[row][col] = value;
+		this.fc.syncDomains(row, col, value, sudoku);
+		if (this.next(row, col, sudoku)) {
+		    return true;
+		}
+		// if the tested value is not a solution, restore the domains and undoes the attribution
+		sudoku[row][col] = 0;
+		this.fc.setDomains(clonedDomains);
+		this.fc.syncDomainKey(key, value);
+	    }
+	} else {
+	    // try all possible values
 	    for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
 		this.steps++;
+		// verify if attribution is legal for solve next cell
 		if (SuDokus.isLegal(row, col, value, sudoku)) {
 		    sudoku[row][col] = value;
-		    if (this.isSolved(row + 1, col, sudoku)) {
+		    if (this.next(row, col, sudoku)) {
 			return true;
 		    }
 		}
-	    }
-	} else {
-	    final String key = SuDokus.generateKey(row, col);
-	    String keyValue;
-	    while (!(keyValue = this.fc.getDomains().get(key)).isEmpty()) {
-		this.steps++;
-		final HashMap<String, String> clonedDomain = this.fc.getClonedDomains();
-		final int value = Integer.valueOf(StringUtils.substring(keyValue, 0, 1));
-		sudoku[row][col] = value;
-		this.fc.sync(row, col, value, sudoku);
-		if (this.isSolved(row + 1, col, sudoku)) {
-		    return true;
-		}
-		sudoku[row][col] = 0;
-		this.fc.setDomains(clonedDomain);
-		this.fc.syncKey(key, value);
 	    }
 	}
 
 	// reset on backtrack
 	sudoku[row][col] = 0;
 	return false;
+    }
+
+    private boolean next(int row, int col, Integer[][] sudoku) {
+	return this.isSolved(row + 1, col, sudoku);
     }
 
 }

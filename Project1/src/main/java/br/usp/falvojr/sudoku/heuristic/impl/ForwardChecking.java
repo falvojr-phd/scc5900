@@ -48,16 +48,16 @@ public class ForwardChecking implements Heuristic {
 	}
     }
 
-    public void sync(int row, int col, int value, Integer[][] sudoku) {
+    public void syncDomains(int row, int col, int value, Integer[][] sudoku) {
 	// verify if exists rows synchronizations
 	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
 	    final String key = SuDokus.generateKey(row, i);
-	    this.syncKey(key, value);
+	    this.syncDomainKey(key, value);
 	}
 	// verify if exists columns synchronizations
 	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
 	    final String key = SuDokus.generateKey(i, col);
-	    this.syncKey(key, value);
+	    this.syncDomainKey(key, value);
 	}
 	// verify if exists boxes synchronizations
 	final int boxRowOffset = (row / SuDokus.BOX_SIZE) * SuDokus.BOX_SIZE;
@@ -65,12 +65,12 @@ public class ForwardChecking implements Heuristic {
 	for (int i = 0; i < SuDokus.BOX_SIZE; i++) {
 	    for (int j = 0; j < SuDokus.BOX_SIZE; j++) {
 		final String key = SuDokus.generateKey(boxRowOffset + i, boxColOffset + j);
-		this.syncKey(key, value);
+		this.syncDomainKey(key, value);
 	    }
 	}
     }
 
-    public void syncKey(final String key, int value) {
+    public void syncDomainKey(final String key, int value) {
 	final String oldPossibilities = this.domains.get(key);
 	final String syncValue = String.valueOf(value);
 	if (StringUtils.contains(oldPossibilities, syncValue)) {

@@ -1,7 +1,9 @@
 package br.usp.falvojr.sudoku.algorithm;
 
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import br.usp.falvojr.sudoku.heuristic.impl.ForwardChecking;
 import br.usp.falvojr.sudoku.heuristic.impl.MinimumRemainingValues;
@@ -14,49 +16,67 @@ import br.usp.falvojr.sudoku.util.SuDokus;
  */
 public class Backtracking {
 
-    private final Stream<Integer[][]> sudokus;
-
+    private final List<Integer[][]> sudokus;
     private ForwardChecking fc;
-    @SuppressWarnings("unused")
     private MinimumRemainingValues mrv;
+    private int steps;
 
-    public Backtracking(Stream<Integer[][]> sudokus) {
+    public Backtracking(List<Integer[][]> sudokus) {
 	super();
 	this.sudokus = sudokus;
     }
 
-    public Backtracking(Stream<Integer[][]> sudokus, ForwardChecking fc) {
+    public Backtracking(List<Integer[][]> sudokus, ForwardChecking fc) {
 	this(sudokus);
 	this.fc = fc;
     }
 
-    public Backtracking(Stream<Integer[][]> sudokus, ForwardChecking fc, MinimumRemainingValues mrv) {
+    public Backtracking(List<Integer[][]> sudokus, ForwardChecking fc, MinimumRemainingValues mrv) {
 	this(sudokus, fc);
 	this.mrv = mrv;
     }
 
-    public void solve() {
-	this.sudokus.forEach(sudoku -> {
+    private boolean hasForwardCheking() {
+	return this.fc != null;
+    }
 
-	    if (this.fc != null) {
-		this.fc.preInit2();
-		this.fc.init2(sudoku);
+    private boolean hasMinimumRemainingValues() {
+	return this.mrv != null;
+    }
+
+    private void writeConfigs() {
+	final StringBuilder sbConfigs = new StringBuilder();
+	if (!this.hasForwardCheking() && !this.hasMinimumRemainingValues()) {
+	    sbConfigs.append("sem poda");
+	} else if (this.hasForwardCheking()) {
+	    sbConfigs.append("FC");
+	    if (this.hasMinimumRemainingValues()) {
+		sbConfigs.append(" + MRV");
+	    }
+	} else if (this.hasMinimumRemainingValues()) {
+	    sbConfigs.append("MRV");
+	}
+	System.out.printf("Resolvendo %1$d SuDokus com Backtracking (%2$s):%3$s%3$s", this.sudokus.size(), sbConfigs.toString(), System.lineSeparator());
+    }
+
+    public void solve() {
+
+	this.writeConfigs();
+
+	for (final Integer[][] sudoku : this.sudokus) {
+	    if (this.hasForwardCheking()) {
+		this.fc.init(sudoku);
 	    }
 
-	    final long startTime = System.nanoTime();
 	    // solves in place
-	    if (isSolved(0, 0, sudoku)) {
-		SuDokus.write(sudoku, true);
+	    if (this.isSolved(0, 0, sudoku)) {
+		SuDokus.write(sudoku);
 	    } else {
 		System.err.println("Solution not found!");
 	    }
+	}
 
-	    final long endTime = System.nanoTime();
-
-	    final long elapsedTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
-
-	    System.out.printf("\n%.2f seconds\n\n", elapsedTime / 1000D);
-	});
+	System.out.println(this.steps);
     }
 
     private boolean isSolved(int row, int col, Integer[][] sudoku) {
@@ -69,84 +89,35 @@ public class Backtracking {
 	}
 	// skip filled cells
 	if (sudoku[row][col] != 0) {
-	    return isSolved(row + 1, col, sudoku);
+	    return this.isSolved(row + 1, col, sudoku);
 	}
 
 	if (this.fc == null) {
 	    for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
+		this.steps++;
 		if (SuDokus.isLegal(row, col, value, sudoku)) {
 		    sudoku[row][col] = value;
-		    if (isSolved(row + 1, col, sudoku)) {
+		    if (this.isSolved(row + 1, col, sudoku)) {
 			return true;
 		    }
 		}
 	    }
 	} else {
-	    // FIXME Forward Checking heuristic tests...
-
-	    // final String key = SuDokus.generateKey(row, col);
-	    // while (!this.fc.getDomains().get(key).isEmpty()) {
-	    // final HashMap<String, String> clonedDomainSync =
-	    // this.fc.getClonedDomains();
-	    // final int value =
-	    // Integer.valueOf(this.fc.getDomains().get(key).substring(0, 1));
-	    // sudoku[row][col] = value;
-	    // this.fc.sync(row, col, value, sudoku);
-	    // if (isSolved(row + 1, col, sudoku)) {
-	    // return true;
-	    // }
-	    // sudoku[row][col] = 0;
-	    // this.fc.setDomains(clonedDomainSync);
-	    // this.fc.syncKey(key, value);
-	    // }
-
-	    /**
-	     * Converts the coords of the cell into a number between 1-81
-	     * representing the cell then it uses that to get the ArrayList of
-	     * domains from a HashMap, key = int of cell (1-81)
-	     */
-	    final int cell = (row * 9) + 1 + col;
-
-	    // for (int i=0;i<domains.size();i++){
-	    // domainSave.put(i+1, domains.get(i));
-	    // }
-	    // domainSave.putAll(domains);
-	    final int[] domainSave = this.fc.domains2.clone();
-
-	    /**
-	     * Loops through all available domains in the ArrayList and attempts
-	     * to use them calls isSafe to ensure that the value can be used in
-	     * the row / column / box without clashing with constraints.
-	     *
-	     * If it can be used within constraints, assign it and then empty
-	     * the relevant domains as long as the domains all have possible
-	     * values, call this method to solve the next cell if not remove the
-	     * value and start again.
-	     *
-	     * No remaining options = backtrack
-	     */
-	    int domain = this.fc.domains2[cell];
-	    while (domain != 0) {
-
-		final int lowestBitIndex = Integer.numberOfTrailingZeros(domain);
-		domain &= ~(1 << lowestBitIndex);
-
-		sudoku[row][col] = lowestBitIndex + 1;
-
-		this.fc.emptyDomains(row, col, sudoku);
-
-		if (!this.fc.emptyDomainFlag) {
-		    if (isSolved(row + 1, col, sudoku)) {
-			return true;
-		    }
+	    final String key = SuDokus.generateKey(row, col);
+	    String keyValue;
+	    while (!(keyValue = this.fc.getDomains().get(key)).isEmpty()) {
+		this.steps++;
+		final HashMap<String, String> clonedDomain = this.fc.getClonedDomains();
+		final int value = Integer.valueOf(StringUtils.substring(keyValue, 0, 1));
+		sudoku[row][col] = value;
+		this.fc.sync(row, col, value, sudoku);
+		if (this.isSolved(row + 1, col, sudoku)) {
+		    return true;
 		}
 		sudoku[row][col] = 0;
-		this.fc.domains2 = domainSave.clone();
-		this.fc.emptyDomainFlag = false;
-
+		this.fc.setDomains(clonedDomain);
+		this.fc.syncKey(key, value);
 	    }
-	    this.fc.domains2 = domainSave;
-	    return false;
 	}
 
 	// reset on backtrack

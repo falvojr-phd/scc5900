@@ -18,14 +18,16 @@ public class SuDokus {
     public static final Integer BOX_SIZE = 3;
 
     /**
-     * Useful method to identifies if the value is legal considering row and column.
+     * Useful method to identifies if the value is legal considering row and
+     * column.
      *
      * @param row
      * @param col
      * @param value
      * @param sudoku
      *
-     * @return a flag indicating if the value is legal considering row and column.
+     * @return a flag indicating if the value is legal considering row and
+     *         column.
      */
     public static boolean isLegal(int row, int col, int value, Integer[][] sudoku) {
 	// verify if exists rows violations
@@ -50,40 +52,23 @@ public class SuDokus {
 		}
 	    }
 	}
-	return true; // no violations, so it's legal
+	// no violations, so it's legal
+	return true;
     }
 
     /**
-     * Print a SuDoku with formating flag parameter.
+     * Print a SuDoku.
      *
      * @param sudoku
-     * @param isFormatted
      */
-    public static synchronized void write(Integer[][] sudoku, boolean isFormatted) {
-	if (isFormatted) {
-	    for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
-		if (i % SuDokus.BOX_SIZE == 0) {
-		    System.out.println(" -----------------------");
-		}
-		for (int j = 0; j < SuDokus.BOARD_SIZE; j++) {
-		    if (j % SuDokus.BOX_SIZE == 0) {
-			System.out.print("| ");
-		    }
-		    System.out.printf("%s ", sudoku[i][j] == 0 ? " " : Integer.toString(sudoku[i][j]));
-		}
-		System.out.println("|");
-	    }
-	    System.out.println(" -----------------------");
-	} else {
-	    for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
-		for (int j = 0; j < SuDokus.BOARD_SIZE; j++) {
-		    System.out.printf("%s ", sudoku[i][j] == 0 ? " " : Integer.toString(sudoku[i][j]));
-		}
-		System.out.println();
+    public static synchronized void write(Integer[][] sudoku) {
+	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
+	    for (int j = 0; j < SuDokus.BOARD_SIZE; j++) {
+		System.out.printf("%s ", sudoku[i][j] == 0 ? " " : Integer.valueOf(sudoku[i][j]));
 	    }
 	    System.out.println();
 	}
-
+	System.out.println();
     }
 
     /**
@@ -104,7 +89,7 @@ public class SuDokus {
      * @param arrayA
      * @param arrayB
      *
-     * @return the difference between arrayA and arrayB
+     * @return the difference between arrayA and arrayB.
      */
     public static int[] difference(int[] arrayA, int[] arrayB) {
 	final HashSet<Integer> difference = new HashSet<>();

@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import br.usp.falvojr.sudoku.algorithm.Backtracking;
@@ -41,14 +42,16 @@ public class Main {
 	    final List<Integer[][]> sudokus = new ArrayList<>();
 	    final Pattern pattern = Pattern.compile(" ");
 
-	    // Prepares file data, ignoring the number of test cases and the empty lines. Moreover, parse String values to Integer.
+	    // Prepares file data, ignoring the number of test cases and the
+	    // empty lines. Moreover, parse String values to Integer.
 	    final Iterator<Integer[]> preparedLines = Files.lines(inputPath).parallel().filter(row -> {
 		return !(row == null || "".equals(row.trim())) && pattern.split(row).length == SuDokus.BOARD_SIZE;
 	    }).map(row -> {
 		return pattern.splitAsStream(row).map(Integer::parseInt).toArray(Integer[]::new);
 	    }).iterator();
 
-	    // Through of the preparedLines variable, creates the SuDoku matrices.
+	    // Through of the preparedLines variable, creates the SuDoku
+	    // matrices.
 	    Integer[][] sudoku = new Integer[SuDokus.BOARD_SIZE][SuDokus.BOARD_SIZE];
 	    Integer sudokuIndex = 0;
 	    while (preparedLines.hasNext()) {
@@ -71,9 +74,15 @@ public class Main {
     }
 
     private static void solveSuDokus(final List<Integer[][]> sudokus) {
-	final ForwardChecking fc = ForwardChecking.getInstance();
-	final Backtracking sudokuBacktracking = new Backtracking(sudokus.stream(), fc);
+	final long startTime = System.nanoTime();
+
+	final Backtracking sudokuBacktracking = new Backtracking(sudokus, ForwardChecking.getInstance());
 	sudokuBacktracking.solve();
+
+	final long endTime = System.nanoTime();
+
+	final long elapsedTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
+	System.out.printf("%1$s%2$.3f seconds%1$s%1$s", System.lineSeparator(), elapsedTime / 1000D);
     }
 
 }

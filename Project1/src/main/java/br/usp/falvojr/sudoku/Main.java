@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import br.usp.falvojr.sudoku.algorithm.Backtracking;
 import br.usp.falvojr.sudoku.heuristic.impl.ForwardChecking;
+import br.usp.falvojr.sudoku.heuristic.impl.MinimumRemainingValues;
 import br.usp.falvojr.sudoku.util.SuDokus;
 
 /**
@@ -24,6 +25,9 @@ public class Main {
 
     private static final String TXT_EXTENSION = ".TXT";
     private static final String BIN_FOLDER = "";
+
+    private static final boolean FLAG_FC = false;
+    private static final boolean FLAG_MRV = false;
 
     public static void main(String[] args) throws Exception {
 
@@ -74,13 +78,21 @@ public class Main {
     private static void solveSuDokus(final List<Integer[][]> sudokus) {
 	final long startTime = System.nanoTime();
 
-	final Backtracking sudokuBacktracking = new Backtracking(sudokus, ForwardChecking.getInstance());
+	final Backtracking sudokuBacktracking = new Backtracking(sudokus);
+
+	if (FLAG_FC) {
+	    sudokuBacktracking.setFc(ForwardChecking.getInstance());
+	}
+	if (FLAG_MRV) {
+	    sudokuBacktracking.setMrv(MinimumRemainingValues.getInstance());
+	}
+
 	sudokuBacktracking.solve();
 
 	final long endTime = System.nanoTime();
 
 	final long elapsedTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
-	System.out.printf("%1$s%2$.3f seconds%1$s%1$s", System.lineSeparator(), elapsedTime / 1000D);
+	System.out.printf("%1$sTempo de execucao: %2$.3f segundos%1$s%1$s", System.lineSeparator(), elapsedTime / 1000D);
     }
 
 }

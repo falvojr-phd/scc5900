@@ -16,9 +16,12 @@ import br.usp.falvojr.sudoku.util.SuDokus;
  */
 public class Backtracking {
 
+    private static final int MAX_STEPS = 1000000;
+
     private final List<Integer[][]> sudokus;
     private ForwardChecking fc;
     private MinimumRemainingValues mrv;
+
     private int steps;
 
     public Backtracking(List<Integer[][]> sudokus) {
@@ -33,6 +36,14 @@ public class Backtracking {
 
     public Backtracking(List<Integer[][]> sudokus, ForwardChecking fc, MinimumRemainingValues mrv) {
 	this(sudokus, fc);
+	this.mrv = mrv;
+    }
+
+    public void setFc(ForwardChecking fc) {
+	this.fc = fc;
+    }
+
+    public void setMrv(MinimumRemainingValues mrv) {
 	this.mrv = mrv;
     }
 
@@ -62,21 +73,24 @@ public class Backtracking {
     public void solve() {
 
 	this.writeConfigs();
-
+	int countSteps = 0, successSuDokus = 0;
 	for (final Integer[][] sudoku : this.sudokus) {
+	    // if FC is present, initialize it
 	    if (this.hasForwardCheking()) {
 		this.fc.init(sudoku);
 	    }
-
 	    // solves in place
 	    if (this.isSolved(0, 0, sudoku)) {
 		SuDokus.write(sudoku);
+		successSuDokus++;
 	    } else {
-		System.err.println("Numero de atribuicoes excede limite maximo");
+		System.err.printf("Numero de atribuicoes excede limite maximo%1$s%1$s", System.lineSeparator());
 	    }
+	    countSteps += this.steps;
+	    this.steps = 0;
 	}
 
-	System.out.println(this.steps);
+	System.out.printf("%d/%d SuDokus foram resolvidos com %d atribuicoes%s", successSuDokus, this.sudokus.size(), countSteps,  System.lineSeparator());
     }
 
     private boolean isSolved(int row, int col, Integer[][] sudoku) {
@@ -97,7 +111,9 @@ public class Backtracking {
 	    String domain;
 	    // try only FC domains possible values
 	    while (!(domain = this.fc.getDomains().get(key)).isEmpty()) {
-		this.steps++;
+		if(!this.hasIncreaseSteps()) {
+		    return false;
+		}
 		// clone domain to facilitate the synchronization of the global map
 		final HashMap<String, String> clonedDomains = this.fc.getClonedDomains();
 		// get the first value on the domain
@@ -116,7 +132,9 @@ public class Backtracking {
 	} else {
 	    // try all possible values
 	    for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
-		this.steps++;
+		if(!this.hasIncreaseSteps()) {
+		    return false;
+		}
 		// verify if attribution is legal for solve next cell
 		if (SuDokus.isLegal(row, col, value, sudoku)) {
 		    sudoku[row][col] = value;
@@ -130,6 +148,14 @@ public class Backtracking {
 	// reset on backtrack
 	sudoku[row][col] = 0;
 	return false;
+    }
+
+    private boolean hasIncreaseSteps() {
+	if (this.steps == MAX_STEPS) {
+	    return false;
+	}
+	this.steps++;
+	return true;
     }
 
     private boolean next(int row, int col, Integer[][] sudoku) {

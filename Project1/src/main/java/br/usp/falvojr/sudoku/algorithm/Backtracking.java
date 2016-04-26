@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import br.usp.falvojr.sudoku.heuristic.impl.ForwardChecking;
-import br.usp.falvojr.sudoku.heuristic.impl.MinimumRemainingValues;
+import br.usp.falvojr.sudoku.heuristic.ForwardChecking;
+import br.usp.falvojr.sudoku.heuristic.MinimumRemainingValues;
 import br.usp.falvojr.sudoku.util.SuDokus;
 
 /**

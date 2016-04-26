@@ -1,10 +1,9 @@
-package br.usp.falvojr.sudoku.heuristic.impl;
+package br.usp.falvojr.sudoku.heuristic;
 
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 
-import br.usp.falvojr.sudoku.heuristic.Heuristic;
 import br.usp.falvojr.sudoku.util.SuDokus;
 
 /**
@@ -12,7 +11,7 @@ import br.usp.falvojr.sudoku.util.SuDokus;
  *
  * @author Venilton FalvoJr (falvojr)
  */
-public class ForwardChecking implements Heuristic {
+public class ForwardChecking {
 
     private HashMap<String, String> domains;
 
@@ -29,7 +28,6 @@ public class ForwardChecking implements Heuristic {
 	return (HashMap<String, String>) this.domains.clone();
     }
 
-    @Override
     public void init(Integer[][] sudoku) {
 	this.domains = new HashMap<>();
 	for (int row = 0; row < SuDokus.BOARD_SIZE; row++) {

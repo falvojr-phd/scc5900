@@ -1,8 +1,9 @@
 package br.usp.falvojr.sudoku;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -11,9 +12,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import br.usp.falvojr.sudoku.algorithm.Backtracking;
-import br.usp.falvojr.sudoku.heuristic.impl.ForwardChecking;
-import br.usp.falvojr.sudoku.heuristic.impl.MinimumRemainingValues;
+import br.usp.falvojr.sudoku.heuristic.ForwardChecking;
+import br.usp.falvojr.sudoku.heuristic.MinimumRemainingValues;
 import br.usp.falvojr.sudoku.util.SuDokus;
 
 /**
@@ -24,21 +27,32 @@ import br.usp.falvojr.sudoku.util.SuDokus;
 public class Main {
 
     private static final String TXT_EXTENSION = ".TXT";
-    private static final String BIN_FOLDER = "";
 
-    private static final boolean FLAG_FC = false;
-    private static final boolean FLAG_MRV = false;
+    private static boolean FLAG_FC = false;
+    private static boolean FLAG_MRV = false;
 
     public static void main(String[] args) throws Exception {
+	final int dirIndex = ArrayUtils.indexOf(args, "-d");
+	final int pathIndex = dirIndex + 1;
+	if (dirIndex > -1 && pathIndex < args.length) {
+	    try {
+		final Path filePath = Paths.get(args[pathIndex]);
+		
+		Main.FLAG_FC = ArrayUtils.contains(args, "-fc");
+		Main.FLAG_MRV = ArrayUtils.contains(args, "-mrv");
 
-	final URL url = ClassLoader.getSystemResources(BIN_FOLDER).nextElement();
-
-	Files.walk(Paths.get(url.toURI())).forEach(filePath -> {
-	    final String fileName = filePath.getFileName().toString().toUpperCase();
-	    if (Files.isRegularFile(filePath) && fileName.endsWith(TXT_EXTENSION)) {
-		Main.processInput(filePath);
+		Files.walk(filePath).forEach(file -> {
+		    final String fileName = file.getFileName().toString().toUpperCase();
+		    if (Files.isRegularFile(file) && fileName.endsWith(TXT_EXTENSION)) {
+			Main.processInput(file);
+		    }
+		});
+	    } catch (InvalidPathException | NoSuchFileException exception) {
+		System.err.println("O path especificado para o argumento -d nao e valido");
 	    }
-	});
+	} else {
+	    System.err.println("O argumento -d e obrigatorio, bem como seu respectivo path. Sintaxe: -d [path]");
+	}
     }
 
     private static void processInput(Path inputPath) {
@@ -79,12 +93,12 @@ public class Main {
 	final long startTime = System.nanoTime();
 
 	final Backtracking sudokuBacktracking = new Backtracking(sudokus);
-
-	if (FLAG_FC) {
-	    sudokuBacktracking.setFc(ForwardChecking.getInstance());
-	}
+	
 	if (FLAG_MRV) {
+	    sudokuBacktracking.setFc(ForwardChecking.getInstance());
 	    sudokuBacktracking.setMrv(MinimumRemainingValues.getInstance());
+	} else if (FLAG_FC) {
+	    sudokuBacktracking.setFc(ForwardChecking.getInstance());
 	}
 
 	sudokuBacktracking.solve();

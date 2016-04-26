@@ -1,7 +1,5 @@
 package br.usp.falvojr.sudoku.util;
 
-import java.util.Arrays;
-import java.util.HashSet;
 
 /**
  * Useful class for SuDoku constants configurations.
@@ -61,7 +59,7 @@ public class SuDokus {
      *
      * @param sudoku
      */
-    public static synchronized void write(Integer[][] sudoku) {
+    public static void write(Integer[][] sudoku) {
 	for (int i = 0; i < SuDokus.BOARD_SIZE; i++) {
 	    for (int j = 0; j < SuDokus.BOARD_SIZE; j++) {
 		System.out.printf("%s ", sudoku[i][j] == 0 ? " " : Integer.valueOf(sudoku[i][j]));
@@ -83,28 +81,4 @@ public class SuDokus {
 	return new StringBuilder().append(row).append(col).toString();
     }
 
-    /**
-     * An O(nlogn) solution for difference between.
-     *
-     * @param arrayA
-     * @param arrayB
-     *
-     * @return the difference between arrayA and arrayB.
-     */
-    public static int[] difference(int[] arrayA, int[] arrayB) {
-	final HashSet<Integer> difference = new HashSet<>();
-	Arrays.sort(arrayA);
-	for (final int itemB : arrayB) {
-	    if (!difference.contains(itemB) && Arrays.binarySearch(arrayA, itemB) < 0) {
-		difference.add(itemB);
-	    }
-	}
-	final int[] differenceArray = new int[difference.size()];
-	int i = 0;
-	for (final int item : difference) {
-	    differenceArray[i++] = item;
-	}
-	return differenceArray;
-
-    }
 }

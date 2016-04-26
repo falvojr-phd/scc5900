@@ -1,19 +1,11 @@
-package br.usp.falvojr.sudoku.heuristic.impl;
-
-import br.usp.falvojr.sudoku.heuristic.Heuristic;
+package br.usp.falvojr.sudoku.heuristic;
 
 /**
- * Minimum Remaining Values (MRV) heuristic.
+ * TODO Minimum Remaining Values (MRV) heuristic.
  *
  * @author Venilton FalvoJr (falvojr)
  */
-public class MinimumRemainingValues implements Heuristic {
-
-    @Override
-    public void init(Integer[][] sudoku) {
-	// TODO Auto-generated method stub
-
-    }
+public class MinimumRemainingValues {
 
     /**
      * Private constructor for Singleton Pattern.

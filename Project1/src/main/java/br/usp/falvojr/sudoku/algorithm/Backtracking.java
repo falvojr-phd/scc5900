@@ -1,7 +1,7 @@
 package br.usp.falvojr.sudoku.algorithm;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -73,14 +73,24 @@ public class Backtracking {
     public void solve() {
 
 	this.writeConfigs();
+
 	int countSteps = 0, successSuDokus = 0;
 	for (final Integer[][] sudoku : this.sudokus) {
 	    // if FC is present, initialize it
 	    if (this.hasForwardCheking()) {
 		this.fc.init(sudoku);
 	    }
+	    int initialRow = 0, initialCol = 0;
+	    // if MRV is present, initialize it
+	    if (this.hasMinimumRemainingValues()) {
+		final Map<String, String> ordenedDomains = this.mrv.init(this.fc.getDomains());
+		this.fc.setDomains(ordenedDomains);
+		final String nextKey = this.mrv.getNextKey(this.fc.getDomains());
+		initialRow = Integer.valueOf(nextKey.substring(0, 1));
+		initialCol = Integer.valueOf(nextKey.substring(1));
+	    }
 	    // solves in place
-	    if (this.isSolved(0, 0, sudoku)) {
+	    if (this.isSolved(initialRow, initialCol, sudoku)) {
 		SuDokus.write(sudoku);
 		successSuDokus++;
 	    } else {
@@ -94,18 +104,24 @@ public class Backtracking {
     }
 
     private boolean isSolved(int row, int col, Integer[][] sudoku) {
-	// break criteria
-	if (row == SuDokus.BOARD_SIZE) {
-	    row = 0;
-	    if (++col == SuDokus.BOARD_SIZE) {
+	if (this.hasMinimumRemainingValues()) {
+	    // MRV break criteria
+	    if (!this.mrv.hasNextKey()) {
 		return true;
 	    }
+	} else {
+	    // break criteria
+	    if (row == SuDokus.BOARD_SIZE) {
+		row = 0;
+		if (++col == SuDokus.BOARD_SIZE) {
+		    return true;
+		}
+	    }
+	    // skip filled cells
+	    if (sudoku[row][col] != 0) {
+		return this.next(row, col, sudoku);
+	    }
 	}
-	// skip filled cells
-	if (sudoku[row][col] != 0) {
-	    return this.next(row, col, sudoku);
-	}
-
 	if (this.hasForwardCheking()) {
 	    final String key = SuDokus.generateKey(row, col);
 	    String domain;
@@ -114,8 +130,10 @@ public class Backtracking {
 		if(!this.hasIncreaseSteps()) {
 		    return false;
 		}
-		// clone domain to facilitate the synchronization of the global map
-		final HashMap<String, String> clonedDomains = this.fc.getClonedDomains();
+		// copy domain to facilitate the synchronization of the FC global map on backtrack
+		final Map<String, String> clonedFcDomains = this.fc.getClonedDomains();
+		// copy index to facilitate the synchronization of the MRV on backtrack
+		final int clonedMrvIndex = this.hasMinimumRemainingValues() ? this.mrv.getCurrentIndex() : 0;
 		// get the first value on the domain
 		final int value = Integer.valueOf(StringUtils.substring(domain, 0, 1));
 		// attribute the value, synchronize FC domains and try solve next cell
@@ -126,8 +144,11 @@ public class Backtracking {
 		}
 		// if the tested value is not a solution, restore the domains and undoes the attribution
 		sudoku[row][col] = 0;
-		this.fc.setDomains(clonedDomains);
+		this.fc.setDomains(clonedFcDomains);
 		this.fc.syncDomainKey(key, value);
+		if (this.hasMinimumRemainingValues()) {
+		    this.mrv.setCurrentIndex(clonedMrvIndex);
+		}
 	    }
 	} else {
 	    // try all possible values
@@ -159,7 +180,17 @@ public class Backtracking {
     }
 
     private boolean next(int row, int col, Integer[][] sudoku) {
-	return this.isSolved(row + 1, col, sudoku);
+	if (this.hasMinimumRemainingValues()) {
+	    final Map<String, String> ordenedDomains = this.mrv.sortByDomains(this.fc.getDomains());
+	    this.fc.setDomains(ordenedDomains);
+	    final String nextKey = this.mrv.getNextKey(this.fc.getDomains());
+	    row = Integer.valueOf(nextKey.substring(0, 1));
+	    col = Integer.valueOf(nextKey.substring(1));
+	} else {
+	    row++;
+	}
+
+	return this.isSolved(row, col, sudoku);
     }
 
 }

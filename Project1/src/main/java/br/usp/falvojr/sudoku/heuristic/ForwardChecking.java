@@ -1,6 +1,7 @@
 package br.usp.falvojr.sudoku.heuristic;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -13,35 +14,42 @@ import br.usp.falvojr.sudoku.util.SuDokus;
  */
 public class ForwardChecking {
 
-    private HashMap<String, String> domains;
+    private Map<String, String> domains;
 
-    public HashMap<String, String> getDomains() {
+    public Map<String, String> getDomains() {
 	return this.domains;
     }
 
-    public void setDomains(HashMap<String, String> domains) {
+    public void setDomains(Map<String, String> domains) {
 	this.domains = domains;
     }
 
     @SuppressWarnings("unchecked")
-    public HashMap<String, String> getClonedDomains() {
-	return (HashMap<String, String>) this.domains.clone();
+    public Map<String, String> getClonedDomains() {
+	final Map<String, String> newMap;
+	try {
+	    newMap = this.domains.getClass().newInstance();
+	    newMap.putAll(this.domains);
+	    return newMap;
+	} catch (InstantiationException | IllegalAccessException e) {
+	    return null;
+	}
     }
 
     public void init(Integer[][] sudoku) {
 	this.domains = new HashMap<>();
 	for (int row = 0; row < SuDokus.BOARD_SIZE; row++) {
 	    for (int col = 0; col < SuDokus.BOARD_SIZE; col++) {
-		final String key = SuDokus.generateKey(row, col);
-		final StringBuilder possibleValues = new StringBuilder();
 		if (sudoku[row][col] == 0) {
+		    final String key = SuDokus.generateKey(row, col);
+		    final StringBuilder possibleValues = new StringBuilder();
 		    for (int value = 1; value <= SuDokus.BOARD_SIZE; value++) {
 			if (SuDokus.isLegal(row, col, value, sudoku)) {
 			    possibleValues.append(value);
 			}
 		    }
+		    this.domains.put(key, possibleValues.toString());
 		}
-		this.domains.put(key, possibleValues.toString());
 	    }
 	}
     }

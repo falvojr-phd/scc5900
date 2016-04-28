@@ -1,5 +1,8 @@
 package br.usp.falvojr.sudoku.util;
 
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Useful class for SuDoku constants configurations.
@@ -79,6 +82,20 @@ public class SuDokus {
      */
     public static String generateKey(int row, int col) {
 	return new StringBuilder().append(row).append(col).toString();
+    }
+
+    /**
+     * Sort a {@link Map} based on your value.
+     *
+     * @param map
+     * @param comparator
+     *
+     * @return sorted {@link Map}.
+     */
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map, Comparator<V> comparator) {
+	final Map<K, V> result = new LinkedHashMap<>();
+	map.entrySet().stream().sorted(Map.Entry.comparingByValue(comparator)).forEachOrdered(e -> result.put(e.getKey(), e.getValue()));
+	return result;
     }
 
 }

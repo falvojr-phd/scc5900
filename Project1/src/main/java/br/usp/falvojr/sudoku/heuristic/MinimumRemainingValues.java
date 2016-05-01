@@ -20,13 +20,6 @@ public class MinimumRemainingValues {
 	private final Comparator<String> comparator = (values1, value2) -> values1.length() - value2.length();
 	private List<String> usedKeys = new LinkedList<>();
 
-	/**
-	 * Private constructor for Singleton Pattern.
-	 */
-	private MinimumRemainingValues() {
-		super();
-	}
-
 	public void setUsedKeys(List<String> usedKeys) {
 		this.usedKeys = usedKeys;
 	}
@@ -66,6 +59,13 @@ public class MinimumRemainingValues {
 	
 	public void burnKey(String key) {
 		this.usedKeys.add(key);
+	}
+	
+	/**
+	 * Private constructor for Singleton Pattern.
+	 */
+	private MinimumRemainingValues() {
+		super();
 	}
 	
 	private static class MinimumRemainingValuesHolder {

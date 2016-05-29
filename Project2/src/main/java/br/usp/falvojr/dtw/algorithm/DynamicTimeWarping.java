@@ -33,7 +33,7 @@ public class DynamicTimeWarping {
 		final Double[][] dtw = new Double[serieA.length + 1][serieB.length + 1];
 
 		// adapt window size (*)
-		w = (serieA.length * w / 100);
+		w = (Math.max(serieA.length, serieB.length) * w) / 100;
 		w = Math.max(w, Math.abs(serieA.length - serieB.length));
 
 		for (int i = 0; i <= serieA.length; i++) {

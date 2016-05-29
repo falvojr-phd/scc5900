@@ -61,11 +61,13 @@ public class Main {
 				}
 				final long endTime = System.nanoTime();
 
+				System.out.printf("Acertos/Total: %.0f/%d%s", accuracyRate, testSeries.size(), System.lineSeparator());
+				
 				final double acurracyPercentage = accuracyRate / testSeries.size() * 100D;		
-				System.out.printf("Taxa de acerto: %.2f%%", acurracyPercentage, System.lineSeparator());
+				System.out.printf("Taxa de acertos: %.2f%%%s", acurracyPercentage, System.lineSeparator());
 				
 				final long elapsedTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
-				System.out.printf("%1$sTempo de execucao: %2$.3f segundos%1$s", System.lineSeparator(), elapsedTime / 1000D);
+				System.out.printf("Tempo de execucao: %.3f segundos%s", elapsedTime / 1000D, System.lineSeparator());
 			} catch (InvalidPathException | NoSuchFileException | IndexOutOfBoundsException exception) {
 				System.err.println("O path especificado para o argumento -d nao e valido");
 			}

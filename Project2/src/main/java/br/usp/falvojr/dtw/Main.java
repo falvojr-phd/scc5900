@@ -32,9 +32,11 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		final int dirIndex = ArrayUtils.indexOf(args, "-d");
 		final int pathIndex = dirIndex + 1;
-		if (dirIndex > -1 && pathIndex < args.length) {
+		if (dirIndex > -1) {
 			try {
-				final boolean is3d = ArrayUtils.contains(args, "-3D");
+				final boolean is3d = ArrayUtils.contains(args, "-3d");
+				
+				final int wIndex = ArrayUtils.indexOf(args, "-w");
 
 				final String training = String.format("treino%s.txt", is3d ? "3D" : StringUtils.EMPTY);
 				final String test = String.format("teste%s.txt", is3d ? "3D" : StringUtils.EMPTY);
@@ -48,7 +50,15 @@ public class Main {
 				final List<Double[]> testSeries = Main.readFileToTemporalSeries(pathTest);
 
 				final long startTime = System.nanoTime();
-				final double accuracyRate = OneNearestNeighbor.getInstance().computeAccuracyRate(trainingSeries, testSeries);
+				
+				double accuracyRate;
+				if (wIndex > -1) {
+					final int wValueIndex = wIndex + 1;
+					final int w = Integer.parseInt(args[wValueIndex]);
+					accuracyRate = OneNearestNeighbor.getInstance().computeAccuracyRate(trainingSeries, testSeries, w);
+				} else {
+					accuracyRate = OneNearestNeighbor.getInstance().computeAccuracyRate(trainingSeries, testSeries);
+				}
 				final long endTime = System.nanoTime();
 
 				final double acurracyPercentage = accuracyRate / testSeries.size() * 100D;		
@@ -56,7 +66,7 @@ public class Main {
 				
 				final long elapsedTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
 				System.out.printf("%1$sTempo de execucao: %2$.3f segundos%1$s", System.lineSeparator(), elapsedTime / 1000D);
-			} catch (InvalidPathException | NoSuchFileException exception) {
+			} catch (InvalidPathException | NoSuchFileException | IndexOutOfBoundsException exception) {
 				System.err.println("O path especificado para o argumento -d nao e valido");
 			}
 		} else {

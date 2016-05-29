@@ -12,15 +12,20 @@ import br.usp.falvojr.dtw.algorithm.DynamicTimeWarping;
  * @author Venilton FalvoJr (falvojr)
  */
 public class OneNearestNeighbor {
-
-	public int computeAccuracyRate(final List<Double[]> trainingSeries, final List<Double[]> testSeries) {
+	
+	public int computeAccuracyRate(final List<Double[]> trainingSeries, final List<Double[]> testSeries, final Integer w) {
 		int accuracy = 0;
 		for (Double[] rowTestSerie : testSeries) {
 			double target = 0, distance = Double.POSITIVE_INFINITY;
 			final Double[] testSerie = (Double[]) ArrayUtils.remove(rowTestSerie, 0);
 			for (Double[] rowTrainingSerie : trainingSeries) {
-				final Double[] trainingSerie = (Double[]) ArrayUtils.remove(rowTrainingSerie, 0);	
-				final Double dtwDistance = DynamicTimeWarping.getInstance().dtwDistance(trainingSerie, testSerie);
+				final Double[] trainingSerie = (Double[]) ArrayUtils.remove(rowTrainingSerie, 0);
+				final Double dtwDistance;
+				if (w == null) {
+					dtwDistance = DynamicTimeWarping.getInstance().dtwDistance(trainingSerie, testSerie);
+				} else {
+					dtwDistance = DynamicTimeWarping.getInstance().dtwDistance(trainingSerie, testSerie, w);
+				}
 				if (dtwDistance < distance) {
 					distance = dtwDistance;
 					target = rowTrainingSerie[0];
@@ -33,6 +38,10 @@ public class OneNearestNeighbor {
 		return accuracy;
 	}
 
+	public int computeAccuracyRate(final List<Double[]> trainingSeries, final List<Double[]> testSeries) {
+		return computeAccuracyRate(trainingSeries, testSeries, null);
+	}
+	
 	/**
 	 * Private constructor for Singleton Pattern.
 	 */

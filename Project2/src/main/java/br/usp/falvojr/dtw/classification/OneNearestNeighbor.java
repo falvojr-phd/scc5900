@@ -14,14 +14,13 @@ import br.usp.falvojr.dtw.algorithm.DynamicTimeWarping;
 public class OneNearestNeighbor {
 
 	public int computeAccuracyRate(final List<Double[]> trainingSeries, final List<Double[]> testSeries) {
-		final DynamicTimeWarping dtw = DynamicTimeWarping.getInstance();
 		int accuracy = 0;
-		for (final Double[] rowTestSerie : testSeries) {
+		for (Double[] rowTestSerie : testSeries) {
 			double target = 0, distance = Double.POSITIVE_INFINITY;
 			final Double[] testSerie = (Double[]) ArrayUtils.remove(rowTestSerie, 0);
-			for (final Double[] rowTrainingSerie : trainingSeries) {
+			for (Double[] rowTrainingSerie : trainingSeries) {
 				final Double[] trainingSerie = (Double[]) ArrayUtils.remove(rowTrainingSerie, 0);	
-				final Double dtwDistance = dtw.dtwDistance(trainingSerie, testSerie);
+				final Double dtwDistance = DynamicTimeWarping.getInstance().dtwDistance(trainingSerie, testSerie);
 				if (dtwDistance < distance) {
 					distance = dtwDistance;
 					target = rowTrainingSerie[0];

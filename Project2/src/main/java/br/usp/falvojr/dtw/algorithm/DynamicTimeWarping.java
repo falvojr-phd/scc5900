@@ -1,8 +1,5 @@
 package br.usp.falvojr.dtw.algorithm;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 /**
  * Dynamic Time Warping (DTW) algorithm.
  * 
@@ -30,8 +27,15 @@ public class DynamicTimeWarping {
 		return dtw[serieA.length][serieB.length];
 	}
 
-	private Double min(Double... values) {
-		return Collections.min(Arrays.asList(values));
+	private Double min(Double value1, Double value2, Double value3) {
+		Double min = value1;
+		if (value2 < min) {
+			min = value2;
+		}
+		if (value3 < min) {
+			min = value3;
+		}
+		return min;
 	}
 
 	private Double distance(Double valueA, Double valueB) {

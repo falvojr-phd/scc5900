@@ -12,19 +12,19 @@ public interface NearestNeighbor {
 	/**
 	 * Signature for computation accuracy rate.
 	 * 
-	 * @param trainingSeries
-	 * @param testSeries
+	 * @param trainingSeries training temporal series.
+	 * @param testSeries test temporal series.
 	 * 
 	 * @return {@link Integer} with accuracy rate.
 	 */
 	int computeAccuracyRate(final List<Double[]> trainingSeries, final List<Double[]> testSeries);
 
 	/**
-	 * Signature for computation accuracy rate with bandwidth parameter.
+	 * Signature for computation accuracy rate with bandwidth Sakoe-Chiba.
 	 * 
-	 * @param trainingSeries
-	 * @param testSeries
-	 * @param w bandwidth
+	 * @param trainingSeries training temporal series.
+	 * @param testSeries test temporal series.
+	 * @param w bandwidth.
 	 * 
 	 * @return {@link Integer} with accuracy rate.
 	 */

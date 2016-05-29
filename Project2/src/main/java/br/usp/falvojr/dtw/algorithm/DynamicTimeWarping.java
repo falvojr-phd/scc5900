@@ -9,6 +9,14 @@ package br.usp.falvojr.dtw.algorithm;
  */
 public class DynamicTimeWarping {
 
+	/**
+	 * Calculate DTW distance.
+	 * 
+	 * @param serieA temporal serie A.
+	 * @param serieB temporal serie B.
+	 * 
+	 * @return {@link Double} with DTW distance.
+	 */
 	public Double dtwDistance(Double[] serieA, Double[] serieB) {
 		final Double[][] dtw = new Double[serieA.length + 1][serieB.length + 1];
 
@@ -29,6 +37,15 @@ public class DynamicTimeWarping {
 		return dtw[serieA.length][serieB.length];
 	}
 
+	/**
+	 * Calculate DTW distance with bandwidth Sakoe-Chiba (<b>extension 1</b>).
+	 * 
+	 * @param serieA temporal serie A.
+	 * @param serieB temporal serie B.
+	 * @param w bandwidth.
+	 * 
+	 * @return {@link Double} with DTW distance.
+	 */
 	public Double dtwDistance(Double[] serieA, Double[] serieB, int w) {
 		final Double[][] dtw = new Double[serieA.length + 1][serieB.length + 1];
 

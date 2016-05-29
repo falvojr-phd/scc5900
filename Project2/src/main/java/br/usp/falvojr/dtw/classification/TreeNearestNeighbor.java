@@ -7,7 +7,7 @@ import org.apache.commons.lang.ArrayUtils;
 import br.usp.falvojr.dtw.algorithm.DynamicTimeWarping;
 
 /**
- * 3-Nearest Neighbor classification for 3D implementation.
+ * 3-Nearest Neighbor classification for 3D implementation (<b>extension 2</b>).
  * 
  * @author Venilton FalvoJr (falvojr)
  */

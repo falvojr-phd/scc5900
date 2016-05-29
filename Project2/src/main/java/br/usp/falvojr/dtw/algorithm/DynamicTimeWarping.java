@@ -3,38 +3,39 @@ package br.usp.falvojr.dtw.algorithm;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * Dynamic Time Warping (DTW) algorithm.
+ * 
+ * @author Venilton FalvoJr (falvojr)
+ */
 public class DynamicTimeWarping {
 
-	public Double dtwDistance(Double[] serieS, Double[] serieT) {
-		final Double[][] dtw = new Double[serieS.length + 1][serieT.length + 1];
+	public Double dtwDistance(Double[] serieA, Double[] serieB) {
+		final Double[][] dtw = new Double[serieA.length + 1][serieB.length + 1];
 
-		for (int i = 0; i <= serieS.length; i++) {
+		for (int i = 0; i <= serieA.length; i++) {
 			dtw[i][0] = Double.POSITIVE_INFINITY;
 		}
-		for (int i = 0; i <= serieT.length; i++) {
+		for (int i = 0; i <= serieB.length; i++) {
 			dtw[0][i] = Double.POSITIVE_INFINITY;
 		}
 		dtw[0][0] = 0.0;
 
-		for (int i = 1; i <= serieS.length; i++) {
-			for (int j = 1; j <= serieT.length; j++) {
-				final double cost = distance(serieS[i - 1], serieT[j - 1]);
-				dtw[i][j] = cost + min(
-					  dtw[i - 1][j - 1] // match
-					, dtw[i][j - 1]		// deletion
-					, dtw[i - 1][j]		// insertion
-				);
+		for (int i = 1; i <= serieA.length; i++) {
+			for (int j = 1; j <= serieB.length; j++) {
+				final double distance = distance(serieA[i - 1], serieB[j - 1]);
+				dtw[i][j] = distance + min(dtw[i - 1][j - 1], dtw[i][j - 1], dtw[i - 1][j]);
 			}
 		}
-		return dtw[serieS.length][serieT.length];
+		return dtw[serieA.length][serieB.length];
 	}
 
 	private Double min(Double... values) {
 		return Collections.min(Arrays.asList(values));
 	}
 
-	private Double distance(Double pointA, Double pointB) {
-		return Math.pow(pointA - pointB, 2);
+	private Double distance(Double valueA, Double valueB) {
+		return Math.pow(valueA - valueB, 2);
 	}
 
 	/**

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -35,23 +36,26 @@ public class Main {
 			try {
 				final boolean is3d = ArrayUtils.contains(args, "-3D");
 
-				final String labels = String.format("rotulos%s.txt", is3d ? "3D" : StringUtils.EMPTY);
 				final String training = String.format("treino%s.txt", is3d ? "3D" : StringUtils.EMPTY);
 				final String test = String.format("teste%s.txt", is3d ? "3D" : StringUtils.EMPTY);
 
 				final String basePath = args[pathIndex];
 
-				final Path pathLabels = Paths.get(basePath, labels);
 				final Path pathTraining = Paths.get(basePath, training);
 				final Path pathTest = Paths.get(basePath, test);
 
-				final Map<Integer, String> mapLabels = Main.readFileToMapLabels(pathLabels);
-				final Map<Integer, List<Double[]>> trainingSeries = Main.readFileToTemporalSeries(pathTraining);
-				final Map<Integer, List<Double[]>> testSeries = Main.readFileToTemporalSeries(pathTest);
+				final List<Double[]> trainingSeries = Main.readFileToTemporalSeries(pathTraining);
+				final List<Double[]> testSeries = Main.readFileToTemporalSeries(pathTest);
 
-				Double rate = OneNearestNeighbor.getInstance().computeAccuracyRate(trainingSeries, testSeries);
+				final long startTime = System.nanoTime();
+				final double accuracyRate = OneNearestNeighbor.getInstance().computeAccuracyRate(trainingSeries, testSeries);
+				final long endTime = System.nanoTime();
+
+				final double acurracyPercentage = accuracyRate / testSeries.size() * 100D;		
+				System.out.printf("Taxa de acerto: %.2f%%", acurracyPercentage, System.lineSeparator());
 				
-				System.err.println(rate + "/" + Files.lines(pathTest).count());
+				final long elapsedTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
+				System.out.printf("%1$sTempo de execucao: %2$.3f segundos%1$s", System.lineSeparator(), elapsedTime / 1000D);
 			} catch (InvalidPathException | NoSuchFileException exception) {
 				System.err.println("O path especificado para o argumento -d nao e valido");
 			}
@@ -60,6 +64,7 @@ public class Main {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static Map<Integer, String> readFileToMapLabels(final Path path) throws IOException {
 		final Map<Integer, String> mapLabels = new HashMap<>();
 		Files.lines(path).forEach(row -> {
@@ -69,19 +74,13 @@ public class Main {
 		return mapLabels;
 	}
 
-	private static Map<Integer, List<Double[]>> readFileToTemporalSeries(final Path path) throws IOException {
-		final Map<Integer, List<Double[]>> mapTemporalSeries = new HashMap<>();
+	private static List<Double[]> readFileToTemporalSeries(final Path path) throws IOException {
+		final List<Double[]> temporalSeries = new ArrayList<>();
 		Files.lines(path).forEach(row -> {
-			final String[] rowValues = PATTERN_SERIES.split(row);
-			final Integer key = Integer.valueOf(rowValues[0]);
-			if (!mapTemporalSeries.containsKey(key)) {
-				mapTemporalSeries.put(key, new ArrayList<>());
-			}
-			final String[] validSeries = (String[]) ArrayUtils.remove(rowValues, 0);
-			final Double[] series = Stream.of(validSeries).map(Double::parseDouble).toArray(Double[]::new);
-			mapTemporalSeries.get(key).add(series);
+			final Double[] serie = Stream.of(PATTERN_SERIES.split(row)).map(Double::parseDouble).toArray(Double[]::new);
+			temporalSeries.add(serie);
 		});
-		return mapTemporalSeries;
+		return temporalSeries;
 	}
 
 }

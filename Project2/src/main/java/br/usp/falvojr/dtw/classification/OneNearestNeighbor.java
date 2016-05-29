@@ -11,8 +11,14 @@ import br.usp.falvojr.dtw.algorithm.DynamicTimeWarping;
  * 
  * @author Venilton FalvoJr (falvojr)
  */
-public class OneNearestNeighbor {
+public class OneNearestNeighbor implements NearestNeighbor {
+
+	@Override
+	public int computeAccuracyRate(final List<Double[]> trainingSeries, final List<Double[]> testSeries) {
+		return computeAccuracyRate(trainingSeries, testSeries, null);
+	}
 	
+	@Override
 	public int computeAccuracyRate(final List<Double[]> trainingSeries, final List<Double[]> testSeries, final Integer w) {
 		int accuracy = 0;
 		for (Double[] rowTestSerie : testSeries) {
@@ -36,10 +42,6 @@ public class OneNearestNeighbor {
 			}
 		}
 		return accuracy;
-	}
-
-	public int computeAccuracyRate(final List<Double[]> trainingSeries, final List<Double[]> testSeries) {
-		return computeAccuracyRate(trainingSeries, testSeries, null);
 	}
 	
 	/**

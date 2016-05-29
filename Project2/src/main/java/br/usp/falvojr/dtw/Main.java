@@ -17,7 +17,9 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import br.usp.falvojr.dtw.classification.NearestNeighbor;
 import br.usp.falvojr.dtw.classification.OneNearestNeighbor;
+import br.usp.falvojr.dtw.classification.TreeNearestNeighbor;
 
 /**
  * Main class.
@@ -49,25 +51,33 @@ public class Main {
 				final List<Double[]> trainingSeries = Main.readFileToTemporalSeries(pathTraining);
 				final List<Double[]> testSeries = Main.readFileToTemporalSeries(pathTest);
 
+				final NearestNeighbor classificassion;
+				if (is3d) {
+					classificassion = TreeNearestNeighbor.getInstance();
+				} else {
+					classificassion = OneNearestNeighbor.getInstance();
+				}
+				
 				final long startTime = System.nanoTime();
 				
-				double accuracyRate;
+				final double accuracyRate;
 				if (wIndex > -1) {
 					final int wValueIndex = wIndex + 1;
 					final int w = Integer.parseInt(args[wValueIndex]);
-					accuracyRate = OneNearestNeighbor.getInstance().computeAccuracyRate(trainingSeries, testSeries, w);
+					accuracyRate = classificassion.computeAccuracyRate(trainingSeries, testSeries, w);
 				} else {
-					accuracyRate = OneNearestNeighbor.getInstance().computeAccuracyRate(trainingSeries, testSeries);
+					accuracyRate = classificassion.computeAccuracyRate(trainingSeries, testSeries);
 				}
 				final long endTime = System.nanoTime();
 
-				System.out.printf("Acertos/Total: %.0f/%d%s", accuracyRate, testSeries.size(), System.lineSeparator());
+				final int total = is3d ? testSeries.size() / 3 : testSeries.size();
+				System.out.printf("Razão de Acertos: %.0f/%d%s", accuracyRate, total, System.lineSeparator());
 				
-				final double acurracyPercentage = accuracyRate / testSeries.size() * 100D;		
-				System.out.printf("Taxa de acertos: %.2f%%%s", acurracyPercentage, System.lineSeparator());
+				final double acurracyPercentage = accuracyRate / total * 100D;		
+				System.out.printf("Taxa de Acertos: %.2f%%%s", acurracyPercentage, System.lineSeparator());
 				
 				final long elapsedTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
-				System.out.printf("Tempo de execucao: %.3f segundos%s", elapsedTime / 1000D, System.lineSeparator());
+				System.out.printf("Tempo de Execucao: %.3fs", elapsedTime / 1000D);
 			} catch (InvalidPathException | NoSuchFileException | IndexOutOfBoundsException exception) {
 				System.err.println("O path especificado para o argumento -d nao e valido");
 			}

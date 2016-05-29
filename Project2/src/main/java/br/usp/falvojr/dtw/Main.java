@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import br.usp.falvojr.dtw.classification.OneNearestNeighbor;
+
 /**
  * Main class.
  *
@@ -47,7 +49,9 @@ public class Main {
 				final Map<Integer, List<Double[]>> trainingSeries = Main.readFileToTemporalSeries(pathTraining);
 				final Map<Integer, List<Double[]>> testSeries = Main.readFileToTemporalSeries(pathTest);
 
-				System.err.println();
+				Double rate = OneNearestNeighbor.getInstance().computeAccuracyRate(trainingSeries, testSeries);
+				
+				System.err.println(rate + "/" + Files.lines(pathTest).count());
 			} catch (InvalidPathException | NoSuchFileException exception) {
 				System.err.println("O path especificado para o argumento -d nao e valido");
 			}
@@ -74,7 +78,7 @@ public class Main {
 				mapTemporalSeries.put(key, new ArrayList<>());
 			}
 			final String[] validSeries = (String[]) ArrayUtils.remove(rowValues, 0);
-			final Double[] series = Stream.of(validSeries).parallel().map(Double::parseDouble).toArray(Double[]::new);
+			final Double[] series = Stream.of(validSeries).map(Double::parseDouble).toArray(Double[]::new);
 			mapTemporalSeries.get(key).add(series);
 		});
 		return mapTemporalSeries;

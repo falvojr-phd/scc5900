@@ -138,8 +138,7 @@ public class Backtracking {
 				// copy domain to facilitate the synchronization of the FC global map on backtrack
 				final Map<String, String> clonedFcDomains = this.fc.getClonedDomains();
 				// copy keys to facilitate the synchronization of the MRV on backtrack
-				final List<String> clonedMrvKeys = this.hasMinimumRemainingValues() ? this.mrv.getClonedUsedKeys()
-				        : null;
+				final List<String> clonedMrvKeys = this.hasMinimumRemainingValues() ? this.mrv.getClonedUsedKeys() : null;
 				// get the first value on the domain
 				final int value = Integer.valueOf(StringUtils.substring(domain, 0, 1));
 				// attribute the value, synchronize FC domains and try solve next cell

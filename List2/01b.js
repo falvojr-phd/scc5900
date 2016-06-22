@@ -15,20 +15,12 @@ var memorizationVector = [];
 (function () {
   'use strict';
   var word = 'ababbbabbababa';
+  // Entire string test 'ababbbabbababa':
   console.log(opt(word, 14));
-  console.log(opt(word, 13));
-  console.log(opt(word, 12));
-  console.log(opt(word, 11));
+  // Test 'ababbbabba':
   console.log(opt(word, 10));
-  console.log(opt(word, 9));
-  console.log(opt(word, 8));
-  console.log(opt(word, 7));
-  console.log(opt(word, 6));
-  console.log(opt(word, 5));
-  console.log(opt(word, 4));
+  // Test 'aba':
   console.log(opt(word, 3));
-  console.log(opt(word, 2));
-  console.log(opt(word, 1));
 })();
 
 function opt(word, j) {

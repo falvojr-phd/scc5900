@@ -26,7 +26,7 @@ var memorizationVector = [];
 function opt(word, j) {
   if (memorizationVector[j] == undefined) {
     var checkedWord = word.substring(0, j);
-    if (checkedWord.isPalindrome() || j < 1) {
+    if (checkedWord.isPalindrome()) {
       memorizationVector[j] = 0;
     } else {
       var i, opts = [];

@@ -41,7 +41,7 @@ function opt(word) {
       }
     }
   }
-  return memoizationVector;
+  return memoizationVector[memoizationIndex];
 }
 
 module.exports.memorizationVector = memoizationVector;

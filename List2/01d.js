@@ -18,8 +18,8 @@ var ex01b = require('./01b')
 })();
 
 /**
- * TODO: Pensar em uma estratégia mais adequada para recuperar os locais de corte do vetor de memoizacão
- * (em ultimo caso usar Backtracking)
+ * TODO: Pensar em uma estratégia adequada para recuperar os locais de corte do vetor de memoizacão
+ * (em ultimo caso usar Backtracking).
  */
 function getCutLocations(memorizationVector) {
 

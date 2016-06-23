@@ -29,3 +29,11 @@ String.prototype.countUppers = function () {
 String.prototype.countLowers = function () {
   return this.length - this.replace(/[a-z]/g, '').length;
 };
+
+Array.prototype.last = function() {
+  return this[this.lastIndex()];
+};
+
+Array.prototype.lastIndex = function() {
+  return this.length - 1;
+};

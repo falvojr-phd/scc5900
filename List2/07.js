@@ -1,5 +1,5 @@
 /**
- * Exercício 7 (contagem de inversões) signficantes.
+ * Exercício 7 (contagem de inversões signficantes).
  *
  * @author falvojr
  * @since 23/06/16.

@@ -11,17 +11,16 @@
 require('./utils');
 
 var ex01b = require('./01b')
-  , word = ex01b.word
-  , memoizationVector = ex01b.memorizationVector;
 
 (function () {
   'use strict';
-  cutsLocations();
+  console.log(getCutLocations(ex01b.memorizationVector));
 })();
 
 /**
- * TODO: Backtracking!? on memorizationVector routes with 3 cuts, returning the first.
+ * TODO: Pensar em uma estratégia mais adequada para recuperar os locais de corte do vetor de memoizacão
+ * (em ultimo caso usar Backtracking)
  */
-function cutsLocations() {
+function getCutLocations(memorizationVector) {
 
 }

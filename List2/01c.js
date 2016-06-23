@@ -14,9 +14,7 @@ var memoizationVector = [];
 
 (function () {
   'use strict';
-  opt('ababbbabbababa');
-  opt('ababbbabba');
-  opt('aba');
+  console.log(opt('ababbbabbababa'));
 })();
 
 function opt(word) {

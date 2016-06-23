@@ -16,11 +16,11 @@ var word = 'ababbbabbababa'
 (function () {
   'use strict';
   // Entire string test 'ababbbabbababa':
-  opt(word, 14);
+  console.log(opt(word, 14));
   // Test 'ababbbabba':
-  opt(word, 10);
+  console.log(opt(word, 10));
   // Test 'aba':
-  opt(word, 3);
+  console.log(opt(word, 3));
 })();
 
 function opt(word, j) {
@@ -41,7 +41,5 @@ function opt(word, j) {
   }
   return memoizationVector[j];
 }
-
-module.exports.word = word;
 
 module.exports.memorizationVector = memoizationVector;

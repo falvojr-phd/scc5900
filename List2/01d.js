@@ -10,17 +10,17 @@
 
 require('./utils');
 
-var ex01b = require('./01b')
+var ex01b = require('./01b');
 
 (function () {
   'use strict';
-  console.log(getCutLocations(ex01b.memorizationVector));
+  console.log(getCutLocations(ex01b.memorization));
 })();
 
 /**
  * TODO: Pensar em uma estratégia adequada para recuperar os locais de corte do vetor de memoizacão
  * (em ultimo caso usar Backtracking).
  */
-function getCutLocations(memorizationVector) {
+function getCutLocations(memorization) {
 
 }

@@ -13,35 +13,37 @@
 
 require('./utils');
 
-var memoizationVector = [];
+var memoization = [];
 
 (function () {
   'use strict';
   console.log(opt('AaAaAAAaAAAaAAaaaaaaA'));
-  // A  a  A  a  A  A  A  a  A  A  A  a  A  A  a  a  a  a  a  a  A
-  // 0  0  1  1  2  2  2  2  3  3  3  3  4  4  4  4  4  4  4  4  5
+  // 5
+  // [ A, a, A, a, A, A, A, a, A, A,  A,  a,  A,  A,  a,  a,  a,  a,  a,  a,  A,]
+  // [ 0, 0, 1, 1, 2, 2, 2, 2, 3, 3,  3,  3,  4,  4,  4,  4,  4,  4,  4,  4,  5 ]
+  // [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ]
 })();
 
 
 function opt(word) {
   var memoizationIndex = word.length - 1;
-  if (memoizationVector[memoizationIndex] == undefined) {
+  if (memoization[memoizationIndex] == undefined) {
     if (word.isUpperCase() || word.isLowerCase()) {
-      memoizationVector[memoizationIndex] = 0;
+      memoization[memoizationIndex] = 0;
     } else {
-      memoizationVector[0] = 0;
+      memoization[0] = 0;
       for (var j = 1; j < word.length; j++) {
-        var previewValue = memoizationVector[j - 1];
+        var previewValue = memoization[j - 1];
         if (word.charAt(j).isLowerCase()) {
-          memoizationVector[j] = previewValue;
+          memoization[j] = previewValue;
         } else if (word.charAt(j).isUpperCase()){
           var lowersBetweenUppers = word.substring(1, j).countLowers();
-          memoizationVector[j] = Math.min(previewValue + 1, lowersBetweenUppers);
+          memoization[j] = Math.min(previewValue + 1, lowersBetweenUppers);
         }
       }
     }
   }
-  return memoizationVector[memoizationIndex];
+  return memoization[memoizationIndex];
 }
 
-module.exports.memorizationVector = memoizationVector;
+module.exports.memorization = memoization;

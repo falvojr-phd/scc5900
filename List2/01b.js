@@ -11,23 +11,34 @@
 require('./utils');
 
 var word = 'ababbbabbababa'
-  , memoizationVector = [];
+  , memoization = [];
 
 (function () {
   'use strict';
-  // Entire string test 'ababbbabbababa':
   console.log(opt(word, 14));
-  // Test 'ababbbabba':
+  // 3
+  // [  , a, b, a, b, b, b, a, b, b,  a,  b,  a,  b,  a ]
+  // [  , 0, 1, 0, 1, 1, 1, 2, 1, 2,  2,  2,  3,  2,  3 ]
+  // [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 ]
+
   console.log(opt(word, 10));
-  // Test 'aba':
+  // 2
+  // [  , a, b, a, b, b, b, a, b, b,  a ]
+  // [  , 0, 1, 0, 1, 1, 1, 2, 1, 2,  2 ]
+  // [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+
   console.log(opt(word, 3));
+  // 0
+  // [  , a, b, a ]
+  // [  , 0, 1, 0 ]
+  // [ 0, 1, 2, 3 ]
 })();
 
 function opt(word, j) {
-  if (memoizationVector[j] == undefined) {
+  if (memoization[j] == undefined) {
     var checkedWord = word.substring(0, j);
     if (checkedWord.isPalindrome()) {
-      memoizationVector[j] = 0;
+      memoization[j] = 0;
     } else {
       var i, opts = [];
       for (i = 1; i < j; i++) {
@@ -36,10 +47,10 @@ function opt(word, j) {
           opts.push(opt(word, i) + 1);
         }
       }
-      memoizationVector[j] = opts.min();
+      memoization[j] = opts.min();
     }
   }
-  return memoizationVector[j];
+  return memoization[j];
 }
 
-module.exports.memorizationVector = memoizationVector;
+module.exports.memorization = memoization;

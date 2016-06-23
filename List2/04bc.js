@@ -10,17 +10,21 @@
 
 require('./utils');
 
-var memoizationVector = [];
+var memoization = [];
+memoization[0] = []; // buy
+memoization[1] = []; // sell
 
 (function () {
   'use strict';
   console.log(opt([1, 2, 3, 0, 2]));
-  console.log(memoizationVector);
+  // 3
+  // [ -1, -1, -1, 1, 1 ] (buy)
+  // [  0,  1,  2, 2, 3 ] (sell)
 })();
 
 function opt(prices) {
   var memoizationIndex = prices.length - 1;
-  if (memoizationVector[memoizationIndex] == undefined) {
+  if (memoization[1][memoizationIndex] == undefined) {
     var sell = 0
       , prevSell = 0
       , buy = -Infinity
@@ -29,12 +33,13 @@ function opt(prices) {
       var price = prices[i];
       prevBuy = buy;
       buy = Math.max(prevSell - price, prevBuy);
+      memoization[0][i] = buy;
       prevSell = sell;
       sell = Math.max(prevBuy + price, prevSell);
-      memoizationVector[i] = sell;
+      memoization[1][i] = sell;
     }
   }
-  return memoizationVector[memoizationIndex];
+  return memoization[1][memoizationIndex];
 }
 
-module.exports.memorizationVector = memoizationVector;
+module.exports.memorization = memoization;

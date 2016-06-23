@@ -12,20 +12,20 @@ var ex04bc = require('./04bc');
 
 (function () {
   'use strict';
-  console.log(getSequence(ex04bc.memorizationVector));
+  console.log(getSequence(ex04bc.memorization));
 })();
 
 /**
  * TODO: Pensar em uma estratégia adequada para recuperar a sequencia de compras, vendas e resfriamentos
  * usando o vetor/matriz de memoizacão.
  */
-function getSequence(memorizationVector) {
+function getSequence(memorization) {
   var sequences = [];
-  for (var i = 0; i < memorizationVector.length; i++) {
+  for (var i = 0; i < memorization.length; i++) {
     var nextIndex = i + 1;
-    if (memorizationVector[i] < memorizationVector[nextIndex]) {
+    if (memorization[i] < memorization[nextIndex]) {
 
-    } else if (memorizationVector[i] > memorizationVector[nextIndex]) {
+    } else if (memorization[i] > memorization[nextIndex]) {
 
     } else {
 

@@ -1,8 +1,8 @@
 /**
  * Exercício 6b.
  *
- * T(n) <= 0          se n < 2 (caso base)
- * T(n) <= T([n/2])   demais casos
+ * T(n) = 0          se n < 2 (caso base)
+ * T(n) = T([n/2])   demais casos
  *
  * @author falvojr
  * @since 23/06/16.

@@ -20,7 +20,7 @@ var ex01b = require('./01b')
 })();
 
 /**
- * TODO: Backtracking on memorizationVector routes with 3 cuts, returning the first.
+ * TODO: Backtracking!? on memorizationVector routes with 3 cuts, returning the first.
  */
 function cutsLocations() {
 

@@ -13,19 +13,20 @@
 
 function sortAndCount(list) {
   var result = {};
+  // verifica se o problema é pequeno/simples e o resolve:
   if (list.length < 2) {
     result.inversions = [];
     result.sortedList = list;
-    return result;
+  } else {
+    // decompõem o problema em partes menores:
+    var m = list.length >> 1;
+    var resultA = sortAndCount(list.slice(0, m));
+    var resultB = sortAndCount(list.slice(m));
+    var resultMerge = mergeAndCount(resultA.sortedList, resultB.sortedList);
+    // combina o resltado dos problemas menores:
+    result.inversions = [].concat(resultA.inversions, resultB.inversions, resultMerge.inversions);
+    result.sortedList = resultMerge.sortedList;
   }
-  var m = list.length >> 1;
-  var resultA = sortAndCount(list.slice(0, m));
-  var resultB = sortAndCount(list.slice(m));
-  var resultMerge = mergeAndCount(resultA.sortedList, resultB.sortedList);
-
-  result.inversions = [].concat(resultA.inversions, resultB.inversions, resultMerge.inversions);
-  result.sortedList = resultMerge.sortedList;
-
   return result;
 }
 

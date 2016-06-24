@@ -14,7 +14,7 @@ var ex01b = require('./01b');
 
 (function () {
   'use strict';
-  console.log(getCutLocations(ex01b.memorization));
+  console.log(getCutLocations(ex01b.memoization));
 })();
 
 /**

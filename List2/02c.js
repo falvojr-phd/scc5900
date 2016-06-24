@@ -17,7 +17,7 @@ var ex02b = require('./02b');
 
 (function () {
   'use strict';
-  console.log(getSubstitutions(ex02b.memorization));
+  console.log(getSubstitutions(ex02b.memoization));
   // [ 1, 3, 7, 11, 20 ]
 })();
 

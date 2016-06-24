@@ -12,7 +12,7 @@ var ex04bc = require('./04bc');
 
 (function () {
   'use strict';
-  console.log(getSequence(ex04bc.memorization));
+  console.log(getSequence(ex04bc.memoization));
 })();
 
 /**

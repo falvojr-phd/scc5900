@@ -42,4 +42,4 @@ function opt(prices) {
   return memoization[1][memoizationIndex];
 }
 
-module.exports.memorization = memoization;
+module.exports.memoization = memoization;

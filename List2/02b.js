@@ -46,4 +46,4 @@ function opt(word) {
   return memoization[memoizationIndex];
 }
 
-module.exports.memorization = memoization;
+module.exports.memoization = memoization;

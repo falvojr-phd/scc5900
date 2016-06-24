@@ -71,4 +71,4 @@ function opt(x, y) {
   return memoization[x.length][y.length];
 }
 
-module.exports.memorization = memoization;
+module.exports.memoization = memoization;

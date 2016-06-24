@@ -1,5 +1,5 @@
 /**
- * Exercício 5c (subsequencia mais longa).
+ * Exercício 5d (subsequencia mais longa).
  *
  * OPT(i, j) = OPT(i-1, j-1) + 1                      se S[i] == S[j]
  * OPT(i, j) = min { OPT(i-1, j), OPT(i, j - 1) }     se S[i] != S[j]

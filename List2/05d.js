@@ -13,6 +13,10 @@ var ex05c = require('./05c');
 (function () {
   'use strict';
   console.log(greaterSubSequenceBasedOnY(ex05c.memoization));
+  // [ 8, 6, 4, 3, 2, 1 ]
+  //
+  // [ 0,   1,   2,   3,   4,   5,   6,   7,   8,   9 ]
+  // [  , 'B', 'E', 'G', 'C', 'F', 'E', 'U', 'B', 'K'];
 })();
 
 function greaterSubSequenceBasedOnY(memorization) {

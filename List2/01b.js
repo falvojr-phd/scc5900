@@ -35,7 +35,7 @@ var word = 'ababbbabbababa'
 })();
 
 function opt(word, j) {
-  if (memoization[j] == undefined) {
+  if (!memoization[j]) {
     var checkedWord = word.substring(0, j);
     if (checkedWord.isPalindrome()) {
       memoization[j] = 0;

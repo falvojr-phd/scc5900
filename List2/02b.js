@@ -27,7 +27,7 @@ var memoization = [];
 
 function opt(word) {
   var memoizationIndex = word.length - 1;
-  if (memoization[memoizationIndex] == undefined) {
+  if (!memoization[memoizationIndex]) {
     if (word.isUpperCase() || word.isLowerCase()) {
       memoization[memoizationIndex] = 0;
     } else {

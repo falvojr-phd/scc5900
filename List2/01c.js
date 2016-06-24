@@ -22,7 +22,7 @@ var memoization = [];
 })();
 
 function opt(word) {
-  if (memoization[word.length] == undefined) {
+  if (!memoization[word.length]) {
     if (word.isPalindrome()) {
       memoization[word.length] = 0;
     } else {

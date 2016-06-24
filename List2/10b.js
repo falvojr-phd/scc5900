@@ -1,8 +1,8 @@
 /**
- * Exercício 10 (potenciacao em O(log n)).
+ * Exercício 10b (potenciacao em O(log n)).
  *
  * T(n) = 1                      se n == 1 (caso base)
- * T(n) = T([n/2]) + T([n/2])?   demais casos
+ * T(n) = T([n/2]) [+ T([n/2])]  demais casos
  *
  * @author falvojr
  * @since 23/06/16.

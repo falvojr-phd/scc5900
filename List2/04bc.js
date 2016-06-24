@@ -24,7 +24,7 @@ memoization[1] = []; // sell
 
 function opt(prices) {
   var memoizationIndex = prices.length - 1;
-  if (memoization[1][memoizationIndex] == undefined) {
+  if (!memoization[1][memoizationIndex]) {
     var sell = 0
       , prevSell = 0
       , buy = -Infinity

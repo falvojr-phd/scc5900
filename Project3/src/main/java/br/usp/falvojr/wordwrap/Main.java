@@ -8,8 +8,11 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.ArrayUtils;
+
+import br.usp.falvojr.wordwrap.algorithm.DynamicProgramming;
 
 /**
  * Main class.
@@ -18,47 +21,46 @@ import org.apache.commons.lang.ArrayUtils;
  */
 public class Main {
 
-	private static final String INPUT_EXTENSION = ".TXT";
-	private static final String INPUT_REGEX = "[ \t\r\n]+";
+    private static final String INPUT_EXTENSION = ".TXT";
+    private static final String INPUT_REGEX = "[ \t\r\n]+";
 
-	private static int LINE_WIDTH;
+    public static void main(String[] args) throws Exception {
+        final int dirIndex = ArrayUtils.indexOf(args, "-d");
+        final int pathIndex = dirIndex + 1;
+        if (dirIndex > -1) {
+            try {
+                final Path filePath = Paths.get(args[pathIndex]);
+                Files.walk(filePath).forEach(file -> {
+                    final String fileName = file.getFileName().toString().toUpperCase();
+                    if (Files.isRegularFile(file) && fileName.endsWith(INPUT_EXTENSION)) {
+                        Main.processInput(file);
+                    }
+                });
+            } catch (InvalidPathException | IndexOutOfBoundsException exception) {
+                System.err.println("O path especificado para o argumento -d nao e valido");
+            }
+        } else {
+            System.err.println("O argumento -d e obrigatorio, bem como seu respectivo path. Sintaxe: -d [path]");
+        }
+    }
 
-	public static void main(String[] args) throws Exception {
-		final int dirIndex = ArrayUtils.indexOf(args, "-d");
-		final int pathIndex = dirIndex + 1;
-		if (dirIndex > -1) {
-			try {
-				final Path filePath = Paths.get(args[pathIndex]);
-				Files.walk(filePath).forEach(file -> {
-					final String fileName = file.getFileName().toString().toUpperCase();
-					if (Files.isRegularFile(file) && fileName.endsWith(INPUT_EXTENSION)) {
-						Main.processInput(file);
-					}
-				});
-			} catch (InvalidPathException | IndexOutOfBoundsException exception) {
-				System.err.println("O path especificado para o argumento -d nao e valido");
-			}
-		} else {
-			System.err.println("O argumento -d e obrigatorio, bem como seu respectivo path. Sintaxe: -d [path]");
-		}
-	}
+    private static void processInput(Path inputPath) {
+        try {
+            final AtomicInteger l = new AtomicInteger();
+            final List<String> words = new LinkedList<>();
 
-	private static void processInput(Path inputPath) {
-		try {
-			final List<String> words = new LinkedList<>();
-			Files.lines(inputPath).forEach(row -> {
-				String[] rowSplit = row.split(INPUT_REGEX);
-				if (words.isEmpty()) {
-					LINE_WIDTH = Integer.parseInt(rowSplit[0]);
-					rowSplit = (String[]) ArrayUtils.remove(rowSplit, 0);
-				}
-				words.addAll(Arrays.asList(rowSplit));
-			});
-			System.out.println(LINE_WIDTH);
-			System.out.println(words);
-		} catch (IOException e) {
-			System.err.println(e.getMessage());
-		}
-	}
+            Files.lines(inputPath).forEach(row -> {
+                String[] rowSplit = row.split(INPUT_REGEX);
+                if (words.isEmpty()) {
+                    l.set(Integer.parseInt(rowSplit[0]));
+                    rowSplit = (String[]) ArrayUtils.remove(rowSplit, 0);
+                }
+                words.addAll(Arrays.asList(rowSplit));
+            });
+            DynamicProgramming.getInstance(l.get(), words).solveWordWrap();
+        } catch (final IOException e) {
+            System.err.println(e.getMessage());
+        }
+    }
 
 }

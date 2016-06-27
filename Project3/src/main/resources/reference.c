@@ -9,9 +9,9 @@
 // A utility function to print the solution
 int printSolution (int p[], int n);
 
-// l[] represents lengths of different words in input sequence. For example,
-// l[] = {3, 2, 2, 5} is for a sentence like "aaa bb cc ddddd".  n is size of
-// l[] and M is line width (maximum no. of characters that can fit in a line)
+// l[] represents lengths of different words in input sequence. For example, l[] = {3, 2, 2, 5} is for a sentence like "aaa bb cc ddddd";
+// n is size of l[]; and
+// M is line width (maximum no. of characters that can fit in a line).
 void solveWordWrap (int l[], int n, int M)
 {
     // For simplicity, 1 extra space is used in all below arrays

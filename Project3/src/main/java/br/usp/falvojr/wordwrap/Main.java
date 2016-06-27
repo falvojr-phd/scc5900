@@ -12,8 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import br.usp.falvojr.wordwrap.algorithm.DynamicProgramming;
-
 /**
  * Main class.
  *
@@ -57,7 +55,7 @@ public class Main {
                 }
                 words.addAll(Arrays.asList(rowSplit));
             });
-            DynamicProgramming.getInstance(l.get(), words).solveWordWrap();
+            System.out.println(words + " " +  l);
         } catch (final IOException e) {
             System.err.println(e.getMessage());
         }

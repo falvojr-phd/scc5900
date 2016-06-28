@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import br.usp.falvojr.wordwrap.algorithm.DynamicProgramming;
+
 /**
  * Main class.
  *
@@ -48,14 +50,14 @@ public class Main {
             final List<String> words = new LinkedList<>();
 
             Files.lines(inputPath).forEach(row -> {
-                String[] rowSplit = row.split(INPUT_REGEX);
+                String[] wordsSplit = row.split(INPUT_REGEX);
                 if (words.isEmpty()) {
-                    l.set(Integer.parseInt(rowSplit[0]));
-                    rowSplit = (String[]) ArrayUtils.remove(rowSplit, 0);
+                    l.set(Integer.parseInt(wordsSplit[0]));
+                    wordsSplit = (String[]) ArrayUtils.remove(wordsSplit, 0);
                 }
-                words.addAll(Arrays.asList(rowSplit));
+                words.addAll(Arrays.asList(wordsSplit));
             });
-            System.out.println(words + " " +  l);
+            DynamicProgramming.getInstance().solve(words, l.get());
         } catch (final IOException e) {
             System.err.println(e.getMessage());
         }

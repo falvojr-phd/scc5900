@@ -1,69 +1,84 @@
 package br.usp.falvojr.wordwrap.algorithm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
- * Word wrap algorithm using Dynamic Programming (DP) strategy. Following its recurrence relation:<br/>
+ * The deficiency of first idea lies in that it repeatedly solves the same subproblems. Yet suppose there was an optimal configuration of lines. Plucking off
+ * its last line would still keep the layout optimal because otherwise it would be possible to improve it and, together with the removed line, would result in
+ * even better configuration, contradicting its optimality. To solve each subproblem just once, it is then necessary to find out and later re-use which of the
+ * lines ending with some word contributes least to the overall cost. As each of the "n" words could terminate at most "n" potential lines, the algorithm runs
+ * in <b>O(n^2)</b>.<br/>Following its recurrence relation:<br/>
  * <br/>
  *
  * <b>OPT(j) = { 0 }</b> if j = 0<br/>
- * <b>OPT(j) = { min { OPT(i - 1) + lowCost(i, j) } }</b> if j > 0 (where 1 <= i <= j)
+ * <b>OPT(j) = { min { OPT(i - 1) + minimum(i, j) } }</b> if j > 0 (where 1 <= i <= j)
  *
  * @author Venilton FalvoJr (falvojr)
- * @see http://xxyxyz.org/line-breaking/
+ *
+ * @see <a href="http://xxyxyz.org/line-breaking">Line breaking</a>
  */
-public class DynamicProgramming {
+public final class DynamicProgramming {
 
-    private static List<Integer> memoization = new ArrayList<>();
+    private int memoization[];
 
-    //    def dynamic(text, width):
-    //        words = text.split()
-    //        count = len(words)
-    //        slack = [[0] * count for i in range(count)]
-    //        for i in range(count):
-    //            slack[i][i] = width - len(words[i])
-    //            for j in range(i + 1, count):
-    //                slack[i][j] = slack[i][j - 1] - len(words[j]) - 1
-    //
-    //        minima = [0] + [10 ** 20] * count
-    //        breaks = [0] * count
-    //        for j in range(count):
-    //            i = j
-    //            while i >= 0:
-    //                if slack[i][j] < 0:
-    //                    cost = 10 ** 10
-    //                else:
-    //                    cost = minima[i] + slack[i][j] ** 2
-    //                if minima[j + 1] > cost:
-    //                    minima[j + 1] = cost
-    //                    breaks[j] = i
-    //                i -= 1
-    //
-    //        lines = []
-    //        j = count
-    //        while j > 0:
-    //            i = breaks[j - 1]
-    //            lines.append(' '.join(words[i:j]))
-    //            j = i
-    //        lines.reverse()
-    //        return lines
+    public void init() {
+        this.memoization = null;
+    }
 
-    public void solve(List<String> words, int width) {
+    public Integer opt(List<String> words, int l) {
+        if (this.memoization == null) {
+            int i, j;
+            final int count = words.size();
+            final int slack[][] = new int[count][count];
+            for (i = 0; i < count; i++) {
+                slack[i][i] = l - words.get(i).length();
+                for (j = i + 1; j < count; j++) {
+                    slack[i][j] = slack[i][j - 1] - words.get(j).length() - 1;
+                }
+            }
+            final int minimum[] = new int[count + 1];
+            for (i = 1; i < minimum.length; i++) {
+                minimum[i] = Integer.MAX_VALUE;
+            }
+            this.memoization = new int[count];
+            for (j = 0; j < count; j++) {
+                i = j;
+                while (i >= 0) {
+                    int cost;
+                    if (slack[i][j] < 0) {
+                        cost = Integer.MAX_VALUE;
+                    } else {
+                        cost = minimum[i] + ((int) Math.pow(slack[i][j], 2));
+                    }
+                    if (minimum[j + 1] > cost) {
+                        minimum[j + 1] = cost;
+                        this.memoization[j] = i;
+                    }
+                    i -= 1;
+                }
+            }
+        }
+        return this.memoization[words.size() - 1];
+    }
+
+    public void printSolution(List<String> words) {
+        int i, j;
         final int count = words.size();
-        final int slack[][] = new int[count][count];
-        for (int i = 0; i < count; i++) {
-            slack[i][i] = width - words.get(i).length();
-            for (int j = i + 1; i < count; j++) {
-                slack[i][j] = slack[i][j - 1] - words.get(j).length() - 1;
-            }
+        final ArrayList<String> lines = new ArrayList<>();
+        j = count;
+        while (j > 0) {
+            i = this.memoization[j - 1];
+            lines.add(StringUtils.join(words.subList(i, j), " "));
+            j = i;
         }
-        for (int i = 0; i < slack.length; i++) {
-            for (int j = 0; j < slack.length; j++) {
-                System.out.printf("/t %d", slack[i][j]);
-            }
-            System.out.println();
-        }
+        Collections.reverse(lines);
+        final String solution = StringUtils.join(lines, System.lineSeparator());
+        System.out.println(solution);
+        System.out.println();
     }
 
     /**

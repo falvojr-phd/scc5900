@@ -11,7 +11,8 @@ import org.apache.commons.lang.StringUtils;
  * its last line would still keep the layout optimal because otherwise it would be possible to improve it and, together with the removed line, would result in
  * even better configuration, contradicting its optimality. To solve each subproblem just once, it is then necessary to find out and later re-use which of the
  * lines ending with some word contributes least to the overall cost. As each of the "n" words could terminate at most "n" potential lines, the algorithm runs
- * in <b>O(n^2)</b>.<br/>Following its recurrence relation:<br/>
+ * in <b>O(n^2)</b>.<br/>
+ * Following its recurrence relation:<br/>
  * <br/>
  *
  * <b>OPT(j) = { 0 }</b> if j = 0<br/>
@@ -58,7 +59,7 @@ public final class DynamicProgramming {
                         minimum[j + 1] = cost;
                         this.memoization[j] = i;
                     }
-                    i -= 1;
+                    i--;
                 }
             }
         }
@@ -72,11 +73,14 @@ public final class DynamicProgramming {
         j = count;
         while (j > 0) {
             i = this.memoization[j - 1];
-            lines.add(StringUtils.join(words.subList(i, j), " "));
+            final String paragraph = StringUtils.join(words.subList(i, j), " ");
+            lines.add(paragraph);
             j = i;
         }
         Collections.reverse(lines);
+
         final String solution = StringUtils.join(lines, System.lineSeparator());
+
         System.out.println(solution);
         System.out.println();
     }

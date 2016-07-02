@@ -1,14 +1,11 @@
 package br.usp.falvojr.wordwrap;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -46,19 +43,14 @@ public class Main {
 
     private static void processInput(Path inputPath) {
         try {
-            final AtomicInteger l = new AtomicInteger();
-            final List<String> words = new LinkedList<>();
+            final String inputData = new String(Files.readAllBytes(inputPath), Charset.defaultCharset());
+            
+            String[] words = inputData.split(WordWrapUtils.INPUT_REGEX);
+            int l = Integer.parseInt(words[0]);
+            words = (String[]) ArrayUtils.remove(words, 0);
 
-            Files.lines(inputPath).forEach(row -> {
-                String[] wordsSplit = row.split(WordWrapUtils.INPUT_REGEX);
-                if (words.isEmpty()) {
-                    l.set(Integer.parseInt(wordsSplit[0]));
-                    wordsSplit = (String[]) ArrayUtils.remove(wordsSplit, 0);
-                }
-                words.addAll(Arrays.asList(wordsSplit));
-            });
             DynamicProgramming.getInstance().init();
-            DynamicProgramming.getInstance().opt(words, l.get());
+            DynamicProgramming.getInstance().opt(words, l);
             DynamicProgramming.getInstance().printSolution(words);
         } catch (final IOException e) {
             System.err.println(e.getMessage());

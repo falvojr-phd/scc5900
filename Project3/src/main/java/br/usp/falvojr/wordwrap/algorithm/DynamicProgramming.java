@@ -17,8 +17,10 @@ import org.apache.commons.lang.StringUtils;
  * Following its recurrence relation:<br/>
  * <br/>
  *
- * <b>OPT(j) = { 0 }</b> if j = 0<br/>
- * <b>OPT(j) = { min { OPT(i - 1) + minimum(i, j) } }</b> if j > 0 (where 1 <= i <= j)
+ * <b>OPT(j) = min { OPT(i) + BADNESS(i, j) } where 0 < i <= j</b><br/>
+ * <br/>
+ * <b>BADNESS(i, j) = Infinity</b>				, se não couber as palavras de i a j<br/>
+ * <b>BADNESS(i, j) = (L - LENGTH[i:j])²</b>	, caso contrário
  *
  * @author Venilton FalvoJr (falvojr)
  *

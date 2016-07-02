@@ -7,20 +7,17 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * The deficiency of first idea lies in that it repeatedly solves the same subproblems. Yet suppose
- * there was an optimal configuration of lines. Plucking off its last line would still keep the
- * layout optimal because otherwise it would be possible to improve it and, together with the
- * removed line, would result in even better configuration, contradicting its optimality. To solve
- * each subproblem just once, it is then necessary to find out and later re-use which of the lines
- * ending with some word contributes least to the overall cost. As each of the "n" words could
- * terminate at most "n" potential lines, the algorithm runs in <b>O(n^2)</b>.<br/>
+ * Word wrap algorithm using Dynamic Programming (DP) strategy. To solve each subproblem just once,
+ * it is then necessary to find out and later re-use which of the lines ending with some word
+ * contributes least to the overall cost. As each of the "n" words could terminate at most "n"
+ * potential lines, the algorithm runs in <b>O(n^2)</b>.<br/>
  * Following its recurrence relation:<br/>
  * <br/>
  *
  * <b>OPT(j) = min { OPT(i) + BADNESS(i, j) } where 0 < i <= j</b><br/>
  * <br/>
- * <b>BADNESS(i, j) = Infinity</b>				, se não couber as palavras de i a j<br/>
- * <b>BADNESS(i, j) = (L - LENGTH[i:j])²</b>	, caso contrário
+ * <b>BADNESS(i, j) = Infinity</b> , , caso as palavras de i a j ultrapassem L<br/>
+ * <b>BADNESS(i, j) = (L - LENGTH[i:j])²</b> , caso contrário
  *
  * @author Venilton FalvoJr (falvojr)
  *
